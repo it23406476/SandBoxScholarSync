@@ -1,0 +1,13 @@
+{
+  "semi": true,
+  "singleQuote": true,
+<<<<<<< HEAD
+  "printWidth": 80,
+  "tabWidth": 2,
+  "trailingComma": "es5"
+=======
+  "trailingComma": "es5",
+  "printWidth": 100,
+  "tabWidth": 2
+>>>>>>> main
+}
