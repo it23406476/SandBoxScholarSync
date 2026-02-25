@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  role      Role     @default(STUDENT) 
+  points    Int      @default(100) // Starting points for bounties
+  badges    String[] 
+  
+  questions Question[]
+  answers   Answer[]
+  posts     Post[]
+  comments  Comment[]
+  createdAt DateTime @default(now())
+}
+
+enum Role {
+  STUDENT
+  LECTURER
+  ADMIN
+}
+
+model Module {
+  id              String     @id @default(cuid())
+  code            String     @unique // e.g., "IT3040"
+  name            String     // e.g., "ITPM"
+  healthReportUrl String?    // For Member 4's PDF Reports
+  questions       Question[]
+}
+
+model Question {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  tags        String[]
+  upvotes     Int      @default(0)
+  bounty      Int      @default(0) // For Your Bounty System
+  isDuplicate Boolean  @default(false)
+  
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  moduleId    String
+  module      Module   @relation(fields: [moduleId], references: [id])
+  
+  answers     Answer[]
+  createdAt   DateTime @default(now())
+}
+
+model Answer {
+  id          String   @id @default(cuid())
+  content     String
+  upvotes     Int      @default(0)
+  isVerified  Boolean  @default(false) 
+  
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  questionId  String
+  question    Question @relation(fields: [questionId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  category  String   
+  likes     Int      @default(0)
+  fileUrl   String?  // For Member 2's Resource Vault (PDFs/Notes)
+  
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  comments  Comment[]
+  createdAt DateTime @default(now())
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id])
+  createdAt DateTime @default(now())
+}
