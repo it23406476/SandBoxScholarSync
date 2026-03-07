@@ -6,11 +6,15 @@ import { BottomNav } from './BottomNav';
 import { CollapsibleSidebar } from './CollapsibleSidebar';
 import { DesktopSidebar } from './DesktopSidebar';
 import { Menu } from 'lucide-react';
+import { useAuthStore } from '@/lib/store';
+import { Button } from '../ui/button';
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname(); // GET CURRENT URL
-  const currentRole = 'student';
+
+  // get the current role from the store
+  const { role, setRole } = useAuthStore();
 
   // Check if we are on a public page (Landing, Login, Register)
   const isPublicPage = pathname === '/' || pathname === '/login' || pathname === '/register';
@@ -23,9 +27,9 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
   // Otherwise, render the full Dashboard Layout
   return (
     <div className="flex min-h-screen w-full bg-background">
-      <DesktopSidebar role={currentRole} />
+      <DesktopSidebar role={role} />
       <CollapsibleSidebar
-        role={currentRole}
+        role={role}
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
@@ -46,10 +50,33 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
 
+        {/* DEV MODE TOGGLE: Switch roles instantly */}
+          <div className="flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-2 text-xs font-mono bg-muted px-2 py-1 rounded-md border text-muted-foreground mr-2">
+              <span>Dev Mode:</span>
+              <Button 
+                variant={role === 'student' ? 'default' : 'outline'} 
+                size="sm" 
+                className="h-6 px-2 text-[10px]"
+                onClick={() => setRole('student')}
+              >
+                Student
+              </Button>
+              <Button 
+                variant={role === 'lecturer' ? 'default' : 'outline'} 
+                size="sm" 
+                className="h-6 px-2 text-[10px]"
+                onClick={() => setRole('lecturer')}
+              >
+                Lecturer
+              </Button>
+            </div>
+          </div>
+
         <div className="flex-1 overflow-auto">{children}</div>
       </main>
 
-      <BottomNav role={currentRole} />
+      <BottomNav role={role} />
     </div>
   );
 }
