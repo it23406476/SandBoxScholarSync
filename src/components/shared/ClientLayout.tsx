@@ -11,16 +11,16 @@ import { Button } from '../ui/button';
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const pathname = usePathname(); // GET CURRENT URL
+  const pathname = usePathname();
 
   // get the current role from the store
   const { role, setRole } = useAuthStore();
 
-  // Check if we are on a public page (Landing, Login, Register)
-  const isPublicPage = pathname === '/' || pathname === '/login' || pathname === '/register';
+  const isDashboardPage =
+    pathname.startsWith('/student') || pathname.startsWith('/lecturer');
 
-  // If it's a public page, ONLY render the content (no sidebars)
-  if (isPublicPage) {
+  // Keep the dashboard shell only for dashboard routes.
+  if (!isDashboardPage) {
     return <div className="min-h-screen w-full bg-background">{children}</div>;
   }
 
