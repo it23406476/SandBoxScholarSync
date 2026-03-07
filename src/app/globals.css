@@ -1,23 +1,22 @@
-  /* ── Fade-in Animation for 404 page ── */
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: none; }
-  }
-  .animate-fade-in {
-    animation: fadeIn 0.7s both;
-  }
-/* src/app/globals.css */
-
-@plugin "tailwindcss-animate";
-@config "../../tailwind.config.ts";
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 
+@plugin "tailwindcss-animate";
+@config "../../tailwind.config.ts";
+
 @custom-variant dark (&:is(.dark *));
+
+/* ── Fade-in Animation for 404 page ── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: none; }
+}
+.animate-fade-in {
+  animation: fadeIn 0.7s both;
+}
 
 /* @tailwind base;
 @tailwind components;
