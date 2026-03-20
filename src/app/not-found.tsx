@@ -6,9 +6,9 @@ import { Button } from '@/components/ui/button';
 export default function NotFound() {
   return (
     <main className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background text-foreground">
-      <div className="blob left-[-8rem] top-[-6rem] h-72 w-72 bg-primary/20 animate-pulse-glow" />
+      <div className="blob -left-32 -top-24 h-72 w-72 bg-primary/20 animate-pulse-glow" />
       <div
-        className="blob bottom-[-6rem] right-[-5rem] h-80 w-80 bg-accent/20 animate-pulse-glow"
+        className="blob -bottom-24 -right-20 h-80 w-80 bg-accent/20 animate-pulse-glow"
         style={{ animationDelay: '1.5s' }}
       />
       <div

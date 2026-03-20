@@ -18,7 +18,7 @@ function MarqueeModules() {
   const items = [...moduleList, ...moduleList];
   return (
     <div
-      className="group/marquee flex w-max gap-4 animate-marquee hover:[animation-play-state:paused]"
+      className="group/marquee flex w-max gap-4 animate-marquee hover:paused"
       style={{ animationDuration: '50s' }}
     >
       {items.map((mod, i) => (
@@ -39,7 +39,7 @@ function MarqueeModule() {
   const items = [...moduleList, ...moduleList];
   return (
     <div
-      className="group/marquee flex w-max gap-4 animate-marquee-reverse hover:[animation-play-state:paused]"
+      className="group/marquee flex w-max gap-4 animate-marquee-reverse hover:paused"
       style={{ animationDuration: '50s' }}
     >
       {items.map((mod, i) => (
@@ -111,13 +111,13 @@ export default function Landing() {
       {/* ── Hero ─────────────────────────────────────── */}
       <section className="relative gradient-hero text-primary-foreground py-24 md:py-32 lg:py-40 overflow-hidden">
         {/* Decorative blobs */}
-        <div className="blob w-[500px] h-[500px] bg-accent/30 -top-40 -left-40 animate-pulse-glow" />
+        <div className="blob w-125 h-125 bg-accent/30 -top-40 -left-40 animate-pulse-glow" />
         <div
-          className="blob w-[400px] h-[400px] bg-primary-foreground/10 bottom-0 right-0 animate-pulse-glow"
+          className="blob w-100 h-100 bg-primary-foreground/10 bottom-0 right-0 animate-pulse-glow"
           style={{ animationDelay: '2s' }}
         />
         <div
-          className="blob w-[300px] h-[300px] bg-accent/20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse-glow"
+          className="blob w-75 h-75 bg-accent/20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse-glow"
           style={{ animationDelay: '3s' }}
         />
 
@@ -136,7 +136,7 @@ export default function Landing() {
               Where Students &amp;{' '}
               <span className="relative inline-block">
                 <span className="relative z-10">Lecturers</span>
-                <span className="absolute bottom-2 left-0 right-0 h-3 bg-accent/40 rounded-sm -z-0" />
+                <span className="absolute bottom-2 left-0 right-0 h-3 bg-accent/40 rounded-sm z-0" />
               </span>{' '}
               Connect Through <span className="text-accent">Knowledge</span>
             </h1>
@@ -235,7 +235,7 @@ export default function Landing() {
                 style={{ animationDelay: `${i * 0.08}s` }}
               >
                 <div
-                  className={`h-12 w-12 rounded-xl bg-gradient-to-br ${f.color} flex items-center justify-center mb-5 transition-transform group-hover:scale-110`}
+                  className={`h-12 w-12 rounded-xl bg-linear-to-br ${f.color} flex items-center justify-center mb-5 transition-transform group-hover:scale-110`}
                 >
                   <f.icon className={`h-6 w-6 ${f.iconColor}`} />
                 </div>
@@ -278,7 +278,7 @@ export default function Landing() {
 
                 {/* Connector line (hidden on last item & mobile) */}
                 {i < steps.length - 1 && (
-                  <div className="hidden md:block absolute top-[4.5rem] -right-4 w-8 border-t-2 border-dashed border-primary/30" />
+                  <div className="hidden md:block absolute top-18 -right-4 w-8 border-t-2 border-dashed border-primary/30" />
                 )}
 
                 <h3 className="font-semibold text-lg mb-2">{s.title}</h3>
@@ -368,8 +368,8 @@ export default function Landing() {
       <section className="relative py-20 md:py-28 overflow-hidden">
         {/* Background decoration */}
         <div className="absolute inset-0 gradient-hero opacity-[0.04]" />
-        <div className="blob w-[500px] h-[500px] bg-primary/10 -bottom-60 -right-60 animate-pulse-glow" />
-        <div className="blob w-[400px] h-[400px] bg-accent/10 -top-60 -left-60 animate-pulse-glow" />
+        <div className="blob w-125 h-125 bg-primary/10 -bottom-60 -right-60 animate-pulse-glow" />
+        <div className="blob w-100 h-100 bg-accent/10 -top-60 -left-60 animate-pulse-glow" />
 
         <div className="container relative mx-auto px-4 md:px-6 text-center">
           <div className="glass rounded-3xl p-10 md:p-16 max-w-3xl mx-auto glow-primary">
