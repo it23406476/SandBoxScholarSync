@@ -56,7 +56,7 @@ async function main() {
   });
 
   // 4. Create Multiple Questions to Test "Smart Search" and "Ranking"
-  
+
   // Question A: The original one (High Bounty)
   const q1 = await prisma.question.create({
     data: {
@@ -71,7 +71,7 @@ async function main() {
   });
 
   // Question B: Similar keywords to test Duplicate Detection
-  const q2 = await prisma.question.create({
+  await prisma.question.create({
     data: {
       title: 'How do we deploy the final assignment?',
       content: 'Are we supposed to use Vercel or Render for the deployment?',
@@ -84,7 +84,7 @@ async function main() {
   });
 
   // Question C: DSA Module Question
-  const q3 = await prisma.question.create({
+  await prisma.question.create({
     data: {
       title: 'Help with Python Pandas assignment',
       content: 'I keep getting a KeyError when merging two dataframes. Any tips?',
@@ -99,7 +99,8 @@ async function main() {
   // 5. Create a Lecturer Verified Answer
   await prisma.answer.create({
     data: {
-      content: 'The final submission link will close on Friday at 11:59 PM. Please ensure your Vercel links are active.',
+      content:
+        'The final submission link will close on Friday at 11:59 PM. Please ensure your Vercel links are active.',
       upvotes: 5,
       isVerified: true, // This is what gives it the 5x multiplier in your algorithm!
       authorId: lecturer.id,

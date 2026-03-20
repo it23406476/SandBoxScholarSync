@@ -8,7 +8,6 @@ import {
   GraduationCap,
   Search,
   Sparkles,
-  Globe,
 } from 'lucide-react';
 
 export const features = [

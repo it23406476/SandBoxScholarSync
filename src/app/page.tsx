@@ -1,6 +1,14 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, CheckCircle2, ArrowRight, Star, Globe, GraduationCap, Sparkles } from 'lucide-react';
+import {
+  ChevronRight,
+  CheckCircle2,
+  ArrowRight,
+  Star,
+  Globe,
+  GraduationCap,
+  Sparkles,
+} from 'lucide-react';
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
 
 import { features, steps, testimonials, stats, moduleList } from './data/dummyData';
