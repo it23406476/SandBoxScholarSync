@@ -1,15 +1,113 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// This is your Prisma schema file
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  role      Role     @default(STUDENT)
+  points    Int      @default(100)
+  badges    String[]
+
+  questions Question[]        @relation("UserQuestions")
+  answers   Answer[]          @relation("UserAnswers")
+  posts     Post[]            @relation("UserPosts")
+  comments  Comment[]         @relation("UserComments")
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}
+
+enum Role {
+  STUDENT
+  LECTURER
+  ADMIN
+}
+
+model Module {
+  id              String     @id @default(cuid())
+  code            String     @unique
+  name            String
+  healthReportUrl String?
+  questions       Question[] @relation("ModuleQuestions")
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+model Question {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  tags        String[]
+  upvotes     Int      @default(0)
+  bounty      Int      @default(0)
+  isDuplicate Boolean  @default(false)
+
+  authorId    String
+  author      User     @relation("UserQuestions", fields: [authorId], references: [id])
+  moduleId    String
+  module      Module   @relation("ModuleQuestions", fields: [moduleId], references: [id])
+
+  answers     Answer[] @relation("QuestionAnswers")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([authorId])
+  @@index([moduleId])
+}
+
+model Answer {
+  id          String   @id @default(cuid())
+  content     String
+  upvotes     Int      @default(0)
+  isVerified  Boolean  @default(false)
+
+  authorId    String
+  author      User     @relation("UserAnswers", fields: [authorId], references: [id])
+  questionId  String
+  question    Question @relation("QuestionAnswers", fields: [questionId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([authorId])
+  @@index([questionId])
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  category  String
+  likes     Int      @default(0)
+  fileUrl   String?
+
+  authorId  String
+  author    User     @relation("UserPosts", fields: [authorId], references: [id])
+  comments  Comment[] @relation("PostComments")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([authorId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+
+  authorId  String
+  author    User     @relation("UserComments", fields: [authorId], references: [id])
+  postId    String
+  post      Post     @relation("PostComments", fields: [postId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([authorId])
+  @@index([postId])
 }

@@ -1,142 +1,24 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
-  BookOpen,
-  MessageSquare,
-  Award,
-  Users,
   ChevronRight,
-  GraduationCap,
-  Zap,
-  Shield,
-  Search,
   CheckCircle2,
   ArrowRight,
-  Sparkles,
-  Globe,
   Star,
+  Globe,
+  GraduationCap,
+  Sparkles,
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
 
-/* ──────────────── Data ──────────────── */
-
-const features = [
-  {
-    icon: MessageSquare,
-    title: 'Module-Based Q&A',
-    desc: 'Ask and answer questions organized by academic modules with threaded discussions.',
-    color: 'from-blue-500/20 to-indigo-500/20',
-    iconColor: 'text-blue-500',
-  },
-  {
-    icon: Award,
-    title: 'Reputation & Badges',
-    desc: 'Earn recognition for your contributions and climb the leaderboard.',
-    color: 'from-amber-500/20 to-orange-500/20',
-    iconColor: 'text-amber-500',
-  },
-  {
-    icon: Users,
-    title: 'Lecturer Verification',
-    desc: 'Get verified, authoritative answers directly from your lecturers.',
-    color: 'from-emerald-500/20 to-green-500/20',
-    iconColor: 'text-emerald-500',
-  },
-  {
-    icon: BookOpen,
-    title: 'Knowledge Sharing',
-    desc: 'Share resources, notes, tips, and study materials with your peers.',
-    color: 'from-purple-500/20 to-violet-500/20',
-    iconColor: 'text-purple-500',
-  },
-  {
-    icon: Zap,
-    title: 'Smart Suggestions',
-    desc: 'AI-powered duplicate detection and similar question recommendations.',
-    color: 'from-cyan-500/20 to-sky-500/20',
-    iconColor: 'text-cyan-500',
-  },
-  {
-    icon: Shield,
-    title: 'Role-Based Access',
-    desc: 'Tailored dashboards and permissions for students and lecturers.',
-    color: 'from-rose-500/20 to-pink-500/20',
-    iconColor: 'text-rose-500',
-  },
-];
-
-const steps = [
-  {
-    num: '01',
-    title: 'Create Your Account',
-    desc: 'Sign up with your university email and pick your modules.',
-    icon: GraduationCap,
-  },
-  {
-    num: '02',
-    title: 'Ask or Browse Questions',
-    desc: 'Post questions or explore answers organized by module and topic.',
-    icon: Search,
-  },
-  {
-    num: '03',
-    title: 'Learn & Earn Reputation',
-    desc: 'Answer questions, get upvoted, and earn badges as you help others.',
-    icon: Sparkles,
-  },
-];
-
-const testimonials = [
-  {
-    quote:
-      'ScholarSync completely changed how I study. Finding verified answers in seconds saves me hours every week.',
-    name: 'Kavisha Perera',
-    role: 'BSc IT Student',
-    avatar: 'KP',
-  },
-  {
-    quote:
-      'As a lecturer, I love that students can self-organize and I can verify the best answers. It reduces my email load by 80%.',
-    name: 'Dr. Nimal Silva',
-    role: 'Senior Lecturer',
-    avatar: 'NS',
-  },
-  {
-    quote:
-      "The reputation system keeps everyone motivated. I've earned 5 badges this semester and it's genuinely fun!",
-    name: 'Amaya Fernando',
-    role: 'BSc CS Student',
-    avatar: 'AF',
-  },
-];
-
-const stats = [
-  { value: '5,000+', label: 'Active Students' },
-  { value: '200+', label: 'Lecturers' },
-  { value: '15,000+', label: 'Questions Answered' },
-  { value: '50+', label: 'Modules Covered' },
-];
-
-/* ──────────────── Page ──────────────── */
-
-// --- Marquee Component ---
-const moduleList = [
-  'IT3040 - Software Engineering',
-  'CS2023 - Data Structures',
-  'IT4010 - Machine Learning',
-  'CS3060 - Database Systems',
-  'IT2050 - Web Technologies',
-  'CS4080 - Cloud Computing',
-  'IT3070 - Networking',
-  'CS2040 - OOP Concepts',
-];
+import { features, steps, testimonials, stats, moduleList } from './data/dummyData';
 
 function MarqueeModules() {
   // Duplicate the list for seamless looping
   const items = [...moduleList, ...moduleList];
   return (
     <div
-      className="group/marquee flex w-max gap-4 animate-marquee hover:[animation-play-state:paused]"
+      className="group/marquee flex w-max gap-4 animate-marquee hover:paused"
       style={{ animationDuration: '50s' }}
     >
       {items.map((mod, i) => (
@@ -157,7 +39,7 @@ function MarqueeModule() {
   const items = [...moduleList, ...moduleList];
   return (
     <div
-      className="group/marquee flex w-max gap-4 animate-marquee-reverse hover:[animation-play-state:paused]"
+      className="group/marquee flex w-max gap-4 animate-marquee-reverse hover:paused"
       style={{ animationDuration: '50s' }}
     >
       {items.map((mod, i) => (
@@ -229,13 +111,13 @@ export default function Landing() {
       {/* ── Hero ─────────────────────────────────────── */}
       <section className="relative gradient-hero text-primary-foreground py-24 md:py-32 lg:py-40 overflow-hidden">
         {/* Decorative blobs */}
-        <div className="blob w-[500px] h-[500px] bg-accent/30 -top-40 -left-40 animate-pulse-glow" />
+        <div className="blob w-125 h-125 bg-accent/30 -top-40 -left-40 animate-pulse-glow" />
         <div
-          className="blob w-[400px] h-[400px] bg-primary-foreground/10 bottom-0 right-0 animate-pulse-glow"
+          className="blob w-100 h-100 bg-primary-foreground/10 bottom-0 right-0 animate-pulse-glow"
           style={{ animationDelay: '2s' }}
         />
         <div
-          className="blob w-[300px] h-[300px] bg-accent/20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse-glow"
+          className="blob w-75 h-75 bg-accent/20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse-glow"
           style={{ animationDelay: '3s' }}
         />
 
@@ -254,7 +136,7 @@ export default function Landing() {
               Where Students &amp;{' '}
               <span className="relative inline-block">
                 <span className="relative z-10">Lecturers</span>
-                <span className="absolute bottom-2 left-0 right-0 h-3 bg-accent/40 rounded-sm -z-0" />
+                <span className="absolute bottom-2 left-0 right-0 h-3 bg-accent/40 rounded-sm z-0" />
               </span>{' '}
               Connect Through <span className="text-accent">Knowledge</span>
             </h1>
@@ -353,7 +235,7 @@ export default function Landing() {
                 style={{ animationDelay: `${i * 0.08}s` }}
               >
                 <div
-                  className={`h-12 w-12 rounded-xl bg-gradient-to-br ${f.color} flex items-center justify-center mb-5 transition-transform group-hover:scale-110`}
+                  className={`h-12 w-12 rounded-xl bg-linear-to-br ${f.color} flex items-center justify-center mb-5 transition-transform group-hover:scale-110`}
                 >
                   <f.icon className={`h-6 w-6 ${f.iconColor}`} />
                 </div>
@@ -396,7 +278,7 @@ export default function Landing() {
 
                 {/* Connector line (hidden on last item & mobile) */}
                 {i < steps.length - 1 && (
-                  <div className="hidden md:block absolute top-[4.5rem] -right-4 w-8 border-t-2 border-dashed border-primary/30" />
+                  <div className="hidden md:block absolute top-18 -right-4 w-8 border-t-2 border-dashed border-primary/30" />
                 )}
 
                 <h3 className="font-semibold text-lg mb-2">{s.title}</h3>
@@ -486,8 +368,8 @@ export default function Landing() {
       <section className="relative py-20 md:py-28 overflow-hidden">
         {/* Background decoration */}
         <div className="absolute inset-0 gradient-hero opacity-[0.04]" />
-        <div className="blob w-[500px] h-[500px] bg-primary/10 -bottom-60 -right-60 animate-pulse-glow" />
-        <div className="blob w-[400px] h-[400px] bg-accent/10 -top-60 -left-60 animate-pulse-glow" />
+        <div className="blob w-125 h-125 bg-primary/10 -bottom-60 -right-60 animate-pulse-glow" />
+        <div className="blob w-100 h-100 bg-accent/10 -top-60 -left-60 animate-pulse-glow" />
 
         <div className="container relative mx-auto px-4 md:px-6 text-center">
           <div className="glass rounded-3xl p-10 md:p-16 max-w-3xl mx-auto glow-primary">

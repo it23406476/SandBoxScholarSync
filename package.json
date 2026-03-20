@@ -7,29 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "format": "prettier --write ."
-  },
-  "dependencies": {
-    "@prisma/client": "^6.19.2",
-    "@hookform/resolvers": "^5.2.2",
-    "@radix-ui/react-slot": "^1.2.4",
-    "@shadcn/ui": "^0.0.4",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "lottie-react": "^2.4.1",
-    "lucide-react": "^0.575.0",
-    "next": "16.1.6",
-    "next-auth": "^4.24.13",
-    "next-themes": "^0.4.6",
-    "prettier": "^3.8.1",
-    "radix-ui": "^1.4.3",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "react-hook-form": "^7.71.2",
-    "tailwind-merge": "^3.5.0",
-    "tailwindcss-animate": "^1.0.7",
-    "zod": "^4.3.6",
-    "zustand": "^5.0.11"
+    "format": "prettier --write .",
+    "seed": "npx prisma db seed --schema=prisma/schema.prisma"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -37,7 +16,8 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.1.6",
+    "eslint-config-next": "^16.1.6",
+    "next": "^16.1.6",
     "prisma": "^6.19.2",
     "shadcn": "^3.8.5",
     "tailwindcss": "^4",
@@ -46,7 +26,18 @@
     "typescript": "^5"
   },
   "prisma": {
-    "schema": "src/prisma/schema.prisma",
-    "seed": "npx tsx ./src/prisma/seed.ts"
+    "schema": "prisma/schema.prisma",
+    "seed": "npx tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.2",
+    "@radix-ui/react-slot": "^1.2.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.577.0",
+    "next-themes": "^0.4.6",
+    "tailwind-merge": "^3.5.0",
+    "tailwindcss-animate": "^1.0.7",
+    "zustand": "^5.0.12"
   }
 }
