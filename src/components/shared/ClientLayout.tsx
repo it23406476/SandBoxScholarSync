@@ -16,10 +16,11 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
   // get the current role from the store
   const { role, setRole } = useAuthStore();
 
-  const isDashboardPage = pathname.startsWith('/student') || pathname.startsWith('/lecturer');
+  const publicRoutes = ['/', '/login', '/register'];
+  const isPublicRoute = publicRoutes.includes(pathname);
 
-  // Keep the dashboard shell only for dashboard routes.
-  if (!isDashboardPage) {
+  // Hide app navigation only on public auth/landing pages.
+  if (isPublicRoute) {
     return <div className="min-h-screen w-full bg-background">{children}</div>;
   }
 
