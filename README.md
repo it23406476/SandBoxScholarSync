@@ -1,4 +1,42 @@
+# ScholarSync
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Prerequisites
+
+- Node.js 18 or newer
+- npm (or yarn/pnpm/bun)
+
+## Dependency Installation
+
+Before running or building the project, install all dependencies:
+
+```bash
+npm install
+```
+
+> **Note:** This project uses several runtime dependencies (UI, state, utility, and theme libraries) that must be present for the app to build and run. If you see errors about missing modules (e.g., `lucide-react`, `clsx`, `zustand`, etc.), ensure you have run `npm install`.
+
+## Prisma Version Alignment
+
+**Important:** The versions of `prisma` (CLI/dev) and `@prisma/client` (runtime) must match. This project uses:
+
+- `prisma@6.19.2`
+- `@prisma/client@6.19.2`
+
+If you upgrade one, upgrade the other to the same version to avoid runtime errors.
+
+## Build Troubleshooting
+
+If you encounter build errors about missing modules, run:
+
+```bash
+npm install
+```
+
+If you see errors about Prisma engine files or version mismatches, ensure both `prisma` and `@prisma/client` are the same version in `package.json`.
+
+## Development
 
 ## Getting Started
 
@@ -17,6 +55,23 @@ bun dev
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+## Scripts
+
+- `npm run dev` — Start the development server
+- `npm run build` — Build for production
+- `npm run start` — Start the production server
+- `npm run lint` — Lint the codebase
+- `npm run format` — Format the codebase with Prettier
+- `npm run seed` — Seed the database (see `prisma/seed.ts`)
+
+## Database
+
+Prisma schema is in `prisma/schema.prisma`. To apply migrations or seed data, use the provided npm scripts.
+
+## License
+
+See [LICENSE](LICENSE).
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
