@@ -21,7 +21,7 @@ interface DesktopSidebarProps {
 }
 
 const studentNav = [
-  { to: '/student', icon: Home, label: 'Dashboard' },
+  { to: '/hub', icon: Home, label: 'Dashboard' },
   { to: '/qna', icon: HelpCircle, label: 'My Questions' },
   { to: '/ask', icon: PlusCircle, label: 'Ask Question' },
   { to: '/forum', icon: BookOpen, label: 'Knowledge Forum' },
@@ -29,7 +29,7 @@ const studentNav = [
 ];
 
 const lecturerNav = [
-  { to: '/lecturer', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/hub', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/modules', icon: BookOpen, label: 'Manage Modules' },
   { to: '/qna', icon: HelpCircle, label: 'All Questions' },
   { to: '/forum', icon: MessageSquare, label: 'Forum' },
@@ -55,7 +55,7 @@ export function DesktopSidebar({ role }: DesktopSidebarProps) {
           <NavLink
             key={item.to}
             to={item.to}
-            end={item.to === '/student' || item.to === '/lecturer'}
+            end={item.to === '/hub'}
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:bg-muted transition-colors"
             activeClassName="bg-primary/10 text-primary font-medium"
           >
