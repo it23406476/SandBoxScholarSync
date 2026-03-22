@@ -12,6 +12,13 @@ import {
   type RankedQuestion,
   type QnaModule,
 } from '@/actions/qna.actions';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
 
 export default function QuestionsPage() {
   const router = useRouter();
@@ -58,19 +65,21 @@ export default function QuestionsPage() {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <select
-          aria-label="Filter by module"
-          value={selectedModule}
-          onChange={(e) => setSelectedModule(e.target.value)}
-          className="h-10 w-full sm:w-48 rounded-md border border-input bg-background px-3 py-2 text-sm"
-        >
-          <option value="all">All Modules</option>
-          {modules.map((m) => (
-            <option key={m.id} value={m.id}>
-              {m.code} - {m.name}
-            </option>
-          ))}
-        </select>
+        <div className="w-full sm:w-48">
+          <Select value={selectedModule} onValueChange={setSelectedModule}>
+            <SelectTrigger>
+              <SelectValue placeholder="All Modules" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Modules</SelectItem>
+              {modules.map((m) => (
+                <SelectItem key={m.id} value={m.id}>
+                  {m.code} - {m.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <div className="space-y-3">
