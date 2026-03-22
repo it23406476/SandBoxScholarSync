@@ -5,11 +5,22 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MessageCircle, ChevronUp } from 'lucide-react';
 import type { RankedQuestion } from '@/actions/qna.actions';
+import { Button } from '@/components/ui/button';
 
-export function QuestionCard({ question }: { question: RankedQuestion }) {
+export function QuestionCard({
+  question,
+  showActions = false,
+  onEdit,
+  onDelete,
+}: {
+  question: RankedQuestion;
+  showActions?: boolean;
+  onEdit?: (question: RankedQuestion) => void;
+  onDelete?: (question: RankedQuestion) => void;
+}) {
   return (
-    <Link href={`/qna/${question.id}`}>
-      <Card className="hover:border-primary/50 transition-colors cursor-pointer mb-3">
+    <Card className="hover:border-primary/50 transition-colors cursor-pointer mb-3">
+      <Link href={`/qna/${question.id}`}>
         <CardContent className="p-4 flex gap-4">
           {/* Upvotes Column */}
           <div className="flex flex-col items-center gap-1 min-w-12">
@@ -50,7 +61,34 @@ export function QuestionCard({ question }: { question: RankedQuestion }) {
             </div>
           </div>
         </CardContent>
-      </Card>
-    </Link>
+      </Link>
+
+      {showActions && (
+        <div className="px-4 pb-4 flex items-center justify-end gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onEdit?.(question);
+            }}
+          >
+            Edit
+          </Button>
+          <Button
+            size="sm"
+            variant="destructive"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onDelete?.(question);
+            }}
+          >
+            Delete
+          </Button>
+        </div>
+      )}
+    </Card>
   );
 }
