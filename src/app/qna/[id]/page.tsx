@@ -50,7 +50,11 @@ export default function QuestionDetail() {
 
   const handleVoteQuestion = async (direction: 'up' | 'down') => {
     if (!question) return;
-    await voteQuestion(question.id, direction);
+    const result = await voteQuestion(question.id, direction, currentUserEmail);
+    if (!result.success) {
+      alert(result.message ?? 'Unable to cast vote.');
+      return;
+    }
     await refreshQuestion();
   };
 
