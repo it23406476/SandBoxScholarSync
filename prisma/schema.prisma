@@ -21,6 +21,8 @@ model User {
   answers   Answer[]          @relation("UserAnswers")
   posts     Post[]            @relation("UserPosts")
   comments  Comment[]         @relation("UserComments")
+  questionVotes Vote[]
+  moduleAssignments LecturerModuleAssignment[]
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 }
@@ -37,6 +39,7 @@ model Module {
   name            String
   healthReportUrl String?
   questions       Question[] @relation("ModuleQuestions")
+  lecturerAssignments LecturerModuleAssignment[]
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
 }
@@ -56,10 +59,37 @@ model Question {
   module      Module   @relation("ModuleQuestions", fields: [moduleId], references: [id])
 
   answers     Answer[] @relation("QuestionAnswers")
+  votes       Vote[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@index([authorId])
+  @@index([moduleId])
+}
+
+model Vote {
+  id         String   @id @default(cuid())
+  value      Int
+  userId     String
+  questionId String
+  user       User     @relation(fields: [userId], references: [id])
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, questionId])
+  @@index([questionId])
+}
+
+model LecturerModuleAssignment {
+  id         String   @id @default(cuid())
+  lecturerId String
+  moduleId   String
+  lecturer   User     @relation(fields: [lecturerId], references: [id], onDelete: Cascade)
+  module     Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([lecturerId, moduleId])
   @@index([moduleId])
 }
 
