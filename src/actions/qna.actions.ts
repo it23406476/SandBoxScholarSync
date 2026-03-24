@@ -5,6 +5,14 @@ import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import type { Prisma } from '@prisma/client';
 
+function isDatabaseConnectionError(error: unknown) {
+  if (!(error instanceof Error)) return false;
+  return (
+    error.message.includes("Can't reach database server") ||
+    error.message.includes('PrismaClientInitializationError')
+  );
+}
+
 // ==========================================
 // 1. SMART DUPLICATE DETECTION (REAL DB QUERY)
 // ==========================================
@@ -244,69 +252,101 @@ export async function deleteQuestion(questionId: string, authorEmail: string) {
 // 3. GET RANKED FEED (REAL DB QUERY)
 // ==========================================
 export async function getRankedQuestions() {
-  const questions = await prisma.question.findMany({
-    include: {
-      author: true,
-      module: true,
-      answers: { include: { author: true } },
-    },
-    orderBy: { createdAt: 'desc' },
-  });
+  try {
+    const questions = await prisma.question.findMany({
+      include: {
+        author: true,
+        module: true,
+        answers: { include: { author: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
 
-  // Sort by Upvotes + Bounty
-  return questions.sort((a, b) => {
-    const scoreA = a.upvotes * 2 + a.bounty * 5;
-    const scoreB = b.upvotes * 2 + b.bounty * 5;
-    return scoreB - scoreA;
-  });
+    // Sort by Upvotes + Bounty
+    return questions.sort((a, b) => {
+      const scoreA = a.upvotes * 2 + a.bounty * 5;
+      const scoreB = b.upvotes * 2 + b.bounty * 5;
+      return scoreB - scoreA;
+    });
+  } catch (error) {
+    if (isDatabaseConnectionError(error)) {
+      console.error('Database unreachable while loading ranked questions:', error);
+      return [];
+    }
+    throw error;
+  }
 }
 
 export async function getQuestionsByAuthorEmail(authorEmail: string) {
-  const questions = await prisma.question.findMany({
-    where: {
-      author: {
-        email: authorEmail,
+  try {
+    const questions = await prisma.question.findMany({
+      where: {
+        author: {
+          email: authorEmail,
+        },
       },
-    },
-    include: {
-      author: true,
-      module: true,
-      answers: { include: { author: true } },
-    },
-    orderBy: { createdAt: 'desc' },
-  });
+      include: {
+        author: true,
+        module: true,
+        answers: { include: { author: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
 
-  return questions.sort((a, b) => {
-    const scoreA = a.upvotes * 2 + a.bounty * 5;
-    const scoreB = b.upvotes * 2 + b.bounty * 5;
-    return scoreB - scoreA;
-  });
+    return questions.sort((a, b) => {
+      const scoreA = a.upvotes * 2 + a.bounty * 5;
+      const scoreB = b.upvotes * 2 + b.bounty * 5;
+      return scoreB - scoreA;
+    });
+  } catch (error) {
+    if (isDatabaseConnectionError(error)) {
+      console.error('Database unreachable while loading user questions:', error);
+      return [];
+    }
+    throw error;
+  }
 }
 
 // ==========================================
 // 4. GET ALL MODULES (For Dropdown)
 // ==========================================
 export async function getModules() {
-  return await prisma.module.findMany({
-    orderBy: { name: 'asc' },
-  });
+  try {
+    return await prisma.module.findMany({
+      orderBy: { name: 'asc' },
+    });
+  } catch (error) {
+    if (isDatabaseConnectionError(error)) {
+      console.error('Database unreachable while loading modules:', error);
+      return [];
+    }
+    throw error;
+  }
 }
 
 // ==========================================
 // 5. GET SINGLE QUESTION DETAIL
 // ==========================================
 export async function getQuestionById(id: string) {
-  return await prisma.question.findUnique({
-    where: { id },
-    include: {
-      author: true,
-      module: true,
-      answers: {
-        include: { author: true },
-        orderBy: { upvotes: 'desc' }, // Sort answers by upvotes naturally
+  try {
+    return await prisma.question.findUnique({
+      where: { id },
+      include: {
+        author: true,
+        module: true,
+        answers: {
+          include: { author: true },
+          orderBy: { upvotes: 'desc' }, // Sort answers by upvotes naturally
+        },
       },
-    },
-  });
+    });
+  } catch (error) {
+    if (isDatabaseConnectionError(error)) {
+      console.error('Database unreachable while loading question details:', error);
+      return null;
+    }
+    throw error;
+  }
 }
 
 export async function voteQuestion(

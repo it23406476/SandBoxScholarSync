@@ -22,22 +22,22 @@ interface DesktopSidebarProps {
 }
 
 const studentNav = [
-  { to: '/dashboard', icon: Home, label: 'Dashboard' },
-  { to: '/hub', icon: MessageSquare, label: 'Q&A Forum' },
-  { to: '/qna', icon: HelpCircle, label: 'Q&A' },
-  { to: '/qna/my', icon: HelpCircle, label: 'My Questions' },
-  { to: '/ask', icon: PlusCircle, label: 'Ask Question' },
-  { to: '/forum', icon: BookOpen, label: 'Knowledge Forum' },
-  { to: '/profile', icon: User, label: 'Profile' },
+  { to: '/dashboard', icon: Home, label: 'Dashboard', end: true },
+  { to: '/hub', icon: MessageSquare, label: 'Q&A Forum', end: true },
+  { to: '/qna', icon: HelpCircle, label: 'Q&A', end: true },
+  { to: '/qna/my', icon: HelpCircle, label: 'My Questions', end: true },
+  { to: '/ask', icon: PlusCircle, label: 'Ask Question', end: true },
+  { to: '/forum', icon: BookOpen, label: 'Knowledge Forum', end: true },
+  { to: '/profile', icon: User, label: 'Profile', end: true },
 ];
 
 const lecturerNav = [
-  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/modules', icon: BookOpen, label: 'Manage Modules' },
-  { to: '/lecturer', icon: HelpCircle, label: 'Question Forum' },
-  { to: '/forum', icon: MessageSquare, label: 'Forum' },
-  { to: '/analytics', icon: BarChart3, label: 'Analytics' },
-  { to: '/profile', icon: User, label: 'Profile' },
+  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', end: true },
+  { to: '/modules', icon: BookOpen, label: 'Manage Modules', end: true },
+  { to: '/lecturer', icon: HelpCircle, label: 'Question Forum', end: true },
+  { to: '/forum', icon: MessageSquare, label: 'Forum', end: true },
+  { to: '/analytics', icon: BarChart3, label: 'Analytics', end: true },
+  { to: '/profile', icon: User, label: 'Profile', end: true },
 ];
 
 export function DesktopSidebar({ role }: DesktopSidebarProps) {
@@ -59,7 +59,7 @@ export function DesktopSidebar({ role }: DesktopSidebarProps) {
           <NavLink
             key={item.to}
             to={item.to}
-            end={item.to === '/hub'}
+            end={item.end}
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:bg-muted transition-colors"
             activeClassName="bg-primary/10 text-primary font-medium"
           >
