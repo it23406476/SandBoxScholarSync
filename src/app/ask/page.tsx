@@ -118,6 +118,7 @@ export default function AskQuestionPage() {
                   <li
                     key={q.id}
                     className="text-sm font-medium hover:underline cursor-pointer text-primary"
+                    onClick={() => router.push(`/qna/${q.id}`)}
                   >
                     {q.title} ({q.upvotes} upvotes)
                   </li>
