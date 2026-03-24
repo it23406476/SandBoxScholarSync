@@ -93,9 +93,9 @@ export default function QuestionDetail() {
     );
 
   return (
-    <div className="p-4 md:p-6 max-w-6xl mx-auto animate-fade-in">
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
-        <div className="space-y-6">
+    <div className="p-4 md:p-6 max-w-6xl mx-auto animate-fade-in h-full">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 h-full">
+        <div className="space-y-6 overflow-y-auto">
           {/* Main Question Card */}
           <Card>
             <CardContent className="p-4 md:p-6 flex gap-4">
@@ -200,7 +200,7 @@ export default function QuestionDetail() {
           </Card>
         </div>
 
-        <aside className="space-y-4">
+        <aside className="space-y-4 sticky top-0 h-full">
           <Card>
             <CardContent className="p-4 space-y-3">
               <h3 className="font-semibold text-sm">Similar Questions</h3>
