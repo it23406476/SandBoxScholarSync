@@ -17,12 +17,10 @@ import {
   type QuestionDetail,
   type RankedQuestion,
 } from '@/actions/qna.actions';
-import { useAuthStore } from '@/lib/store';
 
 export default function QuestionDetail() {
   const params = useParams();
   const id = params.id as string;
-  const currentUserEmail = useAuthStore((state) => state.currentUser.email);
 
   const [question, setQuestion] = useState<QuestionDetail | null>(null);
   const [similarQuestions, setSimilarQuestions] = useState<RankedQuestion[]>([]);
@@ -50,7 +48,7 @@ export default function QuestionDetail() {
 
   const handleVoteQuestion = async (direction: 'up' | 'down') => {
     if (!question) return;
-    const result = await voteQuestion(question.id, direction, currentUserEmail);
+    const result = await voteQuestion(question.id, direction);
     if (!result.success) {
       alert(result.message ?? 'Unable to cast vote.');
       return;
@@ -70,7 +68,6 @@ export default function QuestionDetail() {
     const result = await addAnswer({
       questionId: question.id,
       content: answerText,
-      authorEmail: currentUserEmail,
     });
 
     if (!result.success) {

@@ -9,13 +9,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, Loader2, PlusCircle, Search } from 'lucide-react';
 import {
   deleteQuestion,
-  getQuestionsByAuthorEmail,
+  getMyQuestions,
   getModules,
   updateQuestion,
   type RankedQuestion,
   type QnaModule,
 } from '@/actions/qna.actions';
-import { useAuthStore } from '@/lib/store';
 import {
   Select,
   SelectTrigger,
@@ -42,7 +41,6 @@ type EditDraft = {
 
 export default function MyQuestionsPage() {
   const router = useRouter();
-  const currentUserEmail = useAuthStore((state) => state.currentUser.email);
   const [questions, setQuestions] = useState<RankedQuestion[]>([]);
   const [modules, setModules] = useState<QnaModule[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -54,7 +52,7 @@ export default function MyQuestionsPage() {
 
   useEffect(() => {
     async function fetchData() {
-      const fetchedQuestions = await getQuestionsByAuthorEmail(currentUserEmail);
+      const fetchedQuestions = await getMyQuestions();
       const fetchedModules = await getModules();
       setQuestions(fetchedQuestions);
       setModules(fetchedModules);
@@ -62,7 +60,7 @@ export default function MyQuestionsPage() {
     }
 
     fetchData();
-  }, [currentUserEmail]);
+  }, []);
 
   const filtered = questions
     .filter((q) => selectedModule === 'all' || q.moduleId === selectedModule)
@@ -72,7 +70,7 @@ export default function MyQuestionsPage() {
     const shouldDelete = window.confirm('Delete this question permanently?');
     if (!shouldDelete) return;
 
-    const result = await deleteQuestion(question.id, currentUserEmail);
+    const result = await deleteQuestion(question.id);
     if (!result.success) {
       alert(result.message ?? 'Failed to delete question.');
       return;
@@ -113,7 +111,6 @@ export default function MyQuestionsPage() {
       content,
       tags,
       bounty: editingQuestion.bounty,
-      authorEmail: currentUserEmail,
     });
 
     if (!result.success) {
