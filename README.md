@@ -89,3 +89,18 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Auth Environment Variables (Vercel + CD)
+
+For NextAuth login/session to work after deployment, configure these environment variables in Vercel Project Settings:
+
+- `NEXTAUTH_URL=https://scholar-sync-jet.vercel.app/`
+- `NEXTAUTH_SECRET=<your-strong-random-secret>`
+- `DATABASE_URL=<your-production-postgres-url>`
+- `GOOGLE_CLIENT_ID=<optional, if Google login enabled>`
+- `GOOGLE_CLIENT_SECRET=<optional, if Google login enabled>`
+
+Notes:
+
+- Yes, if `NEXTAUTH_URL` is wrong or missing in production, login callbacks can fail.
+- Set the same variables in your CI/CD provider secrets (GitHub Actions) so build/deploy pipelines are consistent.

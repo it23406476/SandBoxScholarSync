@@ -46,7 +46,6 @@ const lecturerNav: SidebarNavItem[] = [
   { to: '/qna', icon: HelpCircle, label: 'Q&A', end: true },
   { to: '/qna/my', icon: HelpCircle, label: 'My Questions', end: true },
   { to: '/modules', icon: BookOpen, label: 'Manage Modules' },
-  { to: '/lecturer', icon: HelpCircle, label: 'Question Forum' },
   { to: '/forum', icon: MessageSquare, label: 'Forum' },
   { to: '/analytics', icon: BarChart3, label: 'Analytics' },
   { to: '/profile', icon: User, label: 'Profile' },

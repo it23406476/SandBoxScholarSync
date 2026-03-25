@@ -6,6 +6,10 @@ import type { Role } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
 
+if (!process.env.NEXTAUTH_URL?.trim()) {
+  process.env.NEXTAUTH_URL = 'http://localhost:3000';
+}
+
 const googleProvider =
   process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
     ? [

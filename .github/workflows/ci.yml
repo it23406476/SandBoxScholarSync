@@ -13,6 +13,10 @@ on:
 jobs:
   build-and-lint:
     runs-on: ubuntu-latest
+    env:
+      NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL != '' && secrets.NEXTAUTH_URL || 'http://localhost:3000' }}
+      NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET != '' && secrets.NEXTAUTH_SECRET || 'ci-nextauth-secret-please-override-in-repo-secrets' }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL != '' && secrets.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/postgres' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

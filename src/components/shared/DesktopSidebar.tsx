@@ -44,7 +44,6 @@ const lecturerNav: SidebarNavItem[] = [
   { to: '/qna', icon: HelpCircle, label: 'Q&A', end: true },
   { to: '/qna/my', icon: HelpCircle, label: 'My Questions', end: true },
   { to: '/modules', icon: BookOpen, label: 'Manage Modules' },
-  { to: '/lecturer', icon: HelpCircle, label: 'Question Forum' },
   { to: '/forum', icon: MessageSquare, label: 'Forum' },
   { to: '/analytics', icon: BarChart3, label: 'Analytics' },
   { to: '/profile', icon: User, label: 'Profile' },
@@ -82,7 +81,7 @@ export function DesktopSidebar({ role }: DesktopSidebarProps) {
 
       <div className="p-4 border-t">
         <button
-          onClick={() => signOut({ callbackUrl: '/login' })}
+          onClick={() => signOut({ callbackUrl: '/' })}
           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:bg-muted transition-colors w-full"
         >
           <LogOut className="h-4 w-4" />
