@@ -6,6 +6,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 - Node.js 18 or newer
 - npm (or yarn/pnpm/bun)
+- Git installed
 
 ## Dependency Installation
 
