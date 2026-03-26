@@ -128,7 +128,7 @@ export default function Landing() {
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-hero text-sm mb-8 animate-fade-in">
               <Sparkles className="h-3.5 w-3.5 text-accent" />
               <span className="text-primary-foreground/90">
-                Trusted by 5,000+ university students
+                Trusted by thousands of university students
               </span>
             </div>
 
