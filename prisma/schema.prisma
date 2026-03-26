@@ -5,7 +5,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -15,7 +15,7 @@ model User {
   email     String   @unique
   role      Role     @default(STUDENT)
   points    Int      @default(100)
-  badges    String[]
+  badges    String   @default("[]")
 
   questions Question[]        @relation("UserQuestions")
   answers   Answer[]          @relation("UserAnswers")
@@ -46,7 +46,7 @@ model Question {
   id          String   @id @default(cuid())
   title       String
   content     String
-  tags        String[]
+  tags        String   @default("[]")
   upvotes     Int      @default(0)
   bounty      Int      @default(0)
   isDuplicate Boolean  @default(false)
@@ -87,6 +87,7 @@ model Post {
   content      String
   category     String
   imageUrl     String?
+  attachments  String   @default("[]")
   likeCount    Int      @default(0)
   commentCount Int      @default(0)
 

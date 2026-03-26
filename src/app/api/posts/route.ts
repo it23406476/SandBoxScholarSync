@@ -56,14 +56,21 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { title, content, category, imageUrl, authorId } = await request.json();
+    const { title, content, category, imageUrl, authorId, attachments } = await request.json();
 
     if (!title || !content || !category || !authorId) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     const post = await prisma.post.create({
-      data: { title, content, category, imageUrl, authorId },
+      data: { 
+        title, 
+        content, 
+        category, 
+        imageUrl, 
+        authorId,
+        attachments: attachments || [],
+      },
       include: { author: { select: { id: true, name: true, email: true } } },
     });
 

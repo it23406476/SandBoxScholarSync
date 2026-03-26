@@ -83,7 +83,11 @@ export function ArticleEditor({ currentUserId }: ArticleEditorProps) {
     if (!title.trim() || !content.trim() || !currentUserId) return;
     setLoading(true);
     try {
-      await communityApi.createPost(title, content, category, imageUrl || undefined, currentUserId);
+      const attachmentsData = pdfFiles.map(pdf => ({
+        name: pdf.name,
+        data: pdf.data,
+      }));
+      await communityApi.createPost(title, content, category, imageUrl || undefined, currentUserId, attachmentsData);
       router.push('/community');
     } catch (error) {
       console.error('Error creating post:', error);

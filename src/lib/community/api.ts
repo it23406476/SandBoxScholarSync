@@ -22,12 +22,13 @@ export const communityApi = {
     content: string,
     category: string,
     imageUrl: string | undefined,
-    authorId: string
+    authorId: string,
+    attachments?: Array<{ name: string; data: string }>
   ) {
     const res = await fetch('/api/posts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, content, category, imageUrl, authorId }),
+      body: JSON.stringify({ title, content, category, imageUrl, authorId, attachments: attachments || [] }),
     });
     if (!res.ok) throw new Error('Failed to create post');
     return res.json();

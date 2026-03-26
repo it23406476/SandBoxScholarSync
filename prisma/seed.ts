@@ -27,7 +27,7 @@ async function main() {
       email: 'sams@student.sliit.lk',
       role: 'STUDENT',
       points: 500,
-      badges: ['Beta Tester'],
+      badges: JSON.stringify(['Beta Tester']),
     },
   });
 
@@ -51,27 +51,7 @@ async function main() {
       email: 'sarah@lecturer.sliit.lk',
       role: 'LECTURER',
       points: 1000,
-      badges: ['Verified Educator'],
-    },
-  });
-
-  // 3.1 Assign lecturer to modules for lecturer dashboard filtering
-  await prisma.user.update({
-    where: { id: lecturer.id },
-    data: {
-      moduleAssignments: {
-        connectOrCreate: {
-          where: {
-            lecturerId_moduleId: {
-              lecturerId: lecturer.id,
-              moduleId: itpm.id,
-            },
-          },
-          create: {
-            moduleId: itpm.id,
-          },
-        },
-      },
+      badges: JSON.stringify(['Verified Educator']),
     },
   });
 
@@ -82,7 +62,7 @@ async function main() {
     data: {
       title: 'When is the final ITPM Project Submission?',
       content: 'Does anyone know the exact deadline for the final 6-week sprint deployment?',
-      tags: ['deadline', 'deployment', 'itpm'],
+      tags: JSON.stringify(['deadline', 'deployment', 'itpm']),
       bounty: 50,
       upvotes: 2,
       authorId: student1.id,
@@ -95,7 +75,7 @@ async function main() {
     data: {
       title: 'How do we deploy the final assignment?',
       content: 'Are we supposed to use Vercel or Render for the deployment?',
-      tags: ['deployment', 'vercel'],
+      tags: JSON.stringify(['deployment', 'vercel']),
       bounty: 0,
       upvotes: 10, // High upvotes to test ranking
       authorId: student2.id,
@@ -108,7 +88,7 @@ async function main() {
     data: {
       title: 'Help with Python Pandas assignment',
       content: 'I keep getting a KeyError when merging two dataframes. Any tips?',
-      tags: ['python', 'pandas', 'error'],
+      tags: JSON.stringify(['python', 'pandas', 'error']),
       bounty: 20,
       upvotes: 0,
       authorId: student1.id,
@@ -126,6 +106,164 @@ async function main() {
       authorId: lecturer.id,
       questionId: q1.id,
     },
+  });
+
+  // 6. Create Dummy Community Posts
+  const post1 = await prisma.post.create({
+    data: {
+      title: 'React Best Practices for 2024',
+      content: 'I wanted to share some React best practices I learned recently. Using hooks properly, managing state efficiently, and avoiding unnecessary re-renders are key concepts that improved my performance significantly.',
+      category: 'technology',
+      imageUrl: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&h=400&fit=crop',
+      authorId: student1.id,
+      attachments: JSON.stringify([]),
+    },
+  });
+
+  const post2 = await prisma.post.create({
+    data: {
+      title: 'Database Design Fundamentals',
+      content: 'Understanding normalization, relationships, and indexing is crucial for building scalable applications. In this article, I break down the fundamental concepts of relational database design with practical examples.',
+      category: 'database',
+      imageUrl: 'https://images.unsplash.com/photo-1516321318423-f06f70d504d0?w=600&h=400&fit=crop',
+      authorId: lecturer.id,
+      attachments: JSON.stringify([]),
+    },
+  });
+
+  const post3 = await prisma.post.create({
+    data: {
+      title: 'Getting Started with TypeScript',
+      content: 'TypeScript has changed the way I write JavaScript. The type safety it provides catches bugs before they reach production. Here are some tips for beginners transitioning from JavaScript to TypeScript.',
+      category: 'programming',
+      imageUrl: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&h=400&fit=crop',
+      authorId: student2.id,
+      attachments: JSON.stringify([]),
+    },
+  });
+
+  const post4 = await prisma.post.create({
+    data: {
+      title: 'Cybersecurity in Modern Applications',
+      content: 'Security should not be an afterthought. From implementing OAuth to preventing SQL injection, here\'s a comprehensive guide to securing your web applications.',
+      category: 'security',
+      imageUrl: 'https://images.unsplash.com/photo-1516321318423-f06f70d504d0?w=600&h=400&fit=crop',
+      authorId: lecturer.id,
+      attachments: JSON.stringify([]),
+    },
+  });
+
+  // 7. Create Comments on Posts
+  const comment1 = await prisma.comment.create({
+    data: {
+      content: 'This is exactly what I needed! Thanks for the clear explanation.',
+      authorId: student2.id,
+      postId: post1.id,
+    },
+  });
+
+  const comment2 = await prisma.comment.create({
+    data: {
+      content: 'Great article! Do you have any recommendations for state management libraries?',
+      authorId: student1.id,
+      postId: post1.id,
+    },
+  });
+
+  const comment3 = await prisma.comment.create({
+    data: {
+      content: 'I would recommend Redux for larger projects, or Zustand for simpler cases.',
+      authorId: lecturer.id,
+      postId: post1.id,
+    },
+  });
+
+  const comment4 = await prisma.comment.create({
+    data: {
+      content: 'Excellent breakdown of database fundamentals. Very helpful for my project!',
+      authorId: student2.id,
+      postId: post2.id,
+    },
+  });
+
+  const comment5 = await prisma.comment.create({
+    data: {
+      content: 'Could you elaborate more on index optimization?',
+      authorId: student1.id,
+      postId: post2.id,
+    },
+  });
+
+  const comment6 = await prisma.comment.create({
+    data: {
+      content: 'TypeScript definitely has a learning curve, but it\'s worth the investment!',
+      authorId: lecturer.id,
+      postId: post3.id,
+    },
+  });
+
+  // 8. Create Likes on Posts
+  await prisma.like.create({
+    data: {
+      userId: student1.id,
+      postId: post2.id,
+    },
+  });
+
+  await prisma.like.create({
+    data: {
+      userId: student2.id,
+      postId: post1.id,
+    },
+  });
+
+  await prisma.like.create({
+    data: {
+      userId: lecturer.id,
+      postId: post1.id,
+    },
+  });
+
+  await prisma.like.create({
+    data: {
+      userId: student1.id,
+      postId: post3.id,
+    },
+  });
+
+  await prisma.like.create({
+    data: {
+      userId: student2.id,
+      postId: post4.id,
+    },
+  });
+
+  await prisma.like.create({
+    data: {
+      userId: lecturer.id,
+      postId: post3.id,
+    },
+  });
+
+  // Update post like and comment counts
+  await prisma.post.update({
+    where: { id: post1.id },
+    data: { likeCount: 2, commentCount: 3 },
+  });
+
+  await prisma.post.update({
+    where: { id: post2.id },
+    data: { likeCount: 1, commentCount: 2 },
+  });
+
+  await prisma.post.update({
+    where: { id: post3.id },
+    data: { likeCount: 2, commentCount: 1 },
+  });
+
+  await prisma.post.update({
+    where: { id: post4.id },
+    data: { likeCount: 1, commentCount: 0 },
   });
 
   console.log('✅ Database seeded successfully with expanded test data!');
