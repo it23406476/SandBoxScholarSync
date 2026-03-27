@@ -1,3 +1,4 @@
+// ScholarSync Landing Page - Demo change for commit 1
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
@@ -100,14 +101,13 @@ export default function Landing() {
               </Button>
             </Link>
             <Link href="/register">
-              <Button size="sm" className="gap-1">
+              <Button size="sm" className="gap-1 shadow-md">
                 Get Started <ChevronRight className="h-3.5 w-3.5" />
               </Button>
             </Link>
           </div>
         </div>
       </header>
-
       {/* ── Hero ─────────────────────────────────────── */}
       <section className="relative gradient-hero text-primary-foreground py-24 md:py-32 lg:py-40 overflow-hidden">
         {/* Decorative blobs */}
@@ -127,7 +127,7 @@ export default function Landing() {
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-hero text-sm mb-8 animate-fade-in">
               <Sparkles className="h-3.5 w-3.5 text-accent" />
               <span className="text-primary-foreground/90">
-                Trusted by 5,000+ university students
+                Trusted by thousands of university students
               </span>
             </div>
 
@@ -191,7 +191,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── Stats Bar ────────────────────────────────── */}
+      {/* ── Stats Bar ───────────────────────────────────── */}
       <section className="relative -mt-10 z-10 px-4 md:px-6">
         <div className="container mx-auto">
           <div className="glass-strong rounded-2xl shadow-xl p-6 md:p-8">
@@ -210,7 +210,6 @@ export default function Landing() {
           </div>
         </div>
       </section>
-
       {/* ── Features ─────────────────────────────────── */}
       <section id="features" className="py-20 md:py-28 scroll-mt-20">
         <div className="container mx-auto px-4 md:px-6">
@@ -248,7 +247,6 @@ export default function Landing() {
           </div>
         </div>
       </section>
-
       {/* ── How It Works ─────────────────────────────── */}
       <section id="how-it-works" className="py-20 md:py-28 bg-muted/40 scroll-mt-20">
         <div className="container mx-auto px-4 md:px-6">
@@ -288,7 +286,6 @@ export default function Landing() {
           </div>
         </div>
       </section>
-
       {/* ── Testimonials ─────────────────────────────── */}
       <section id="testimonials" className="py-20 md:py-28 scroll-mt-20">
         <div className="container mx-auto px-4 md:px-6">
@@ -336,7 +333,6 @@ export default function Landing() {
           </div>
         </div>
       </section>
-
       {/* ── Popular Modules (Marquee) ────────────────── */}
       <section className="py-14 bg-muted/40 overflow-hidden">
         <div className="container mx-auto px-4 md:px-6 text-center mb-8">
@@ -363,7 +359,6 @@ export default function Landing() {
           <MarqueeModule />
         </div>
       </section>
-
       {/* ── Final CTA ────────────────────────────────── */}
       <section className="relative py-20 md:py-28 overflow-hidden">
         {/* Background decoration */}
@@ -404,7 +399,6 @@ export default function Landing() {
           </div>
         </div>
       </section>
-
       {/* ── Footer ───────────────────────────────────── */}
       <footer className="border-t py-10 mt-auto">
         <div className="container mx-auto px-4 md:px-6">
