@@ -13,6 +13,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { NavLink } from '../NavLink';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { signOut, useSession } from 'next-auth/react';
 
 // Using a simple type for now to avoid mock-data errors
@@ -49,7 +50,6 @@ const lecturerNav: SidebarNavItem[] = [
   { to: '/profile', icon: User, label: 'Profile' },
 ];
 
-
 export function DesktopSidebar({ role }: DesktopSidebarProps) {
   const items = role === 'student' ? studentNav : lecturerNav;
   const { data: session } = useSession();
@@ -57,10 +57,13 @@ export function DesktopSidebar({ role }: DesktopSidebarProps) {
   return (
     <aside className="hidden md:flex flex-col w-64 border-r bg-card min-h-screen sticky top-0">
       <div className="p-6 border-b">
-        <h1 className="text-xl font-bold">
-          <span className="text-primary">Scholar</span>
-          <span className="text-accent">Sync</span>
-        </h1>
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-xl font-bold">
+            <span className="text-primary">Scholar</span>
+            <span className="text-accent">Sync</span>
+          </h1>
+          <NotificationBell />
+        </div>
         <p className="text-xs text-muted-foreground mt-1 capitalize">{role} Portal</p>
         <p className="text-xs text-muted-foreground mt-1 truncate">{session?.user?.name}</p>
       </div>

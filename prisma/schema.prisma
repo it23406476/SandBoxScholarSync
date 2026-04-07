@@ -32,6 +32,7 @@ model User {
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
   likes     Like[]            @relation("UserLikes")
+  notifications Notification[] @relation("UserNotifications")
 }
 
 model Account {
@@ -141,6 +142,7 @@ model Post {
   likes        Like[]    @relation("PostLikes")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  notifications Notification[] @relation("PostNotifications")
 
   @@index([authorId])
   @@index([createdAt])
@@ -156,6 +158,7 @@ model Comment {
   post      Post     @relation("PostComments", fields: [postId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  notifications Notification[] @relation("CommentNotifications")
 
   @@index([authorId])
   @@index([postId])
@@ -169,8 +172,42 @@ model Like {
   postId    String
   post      Post     @relation("PostLikes", fields: [postId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+  notifications Notification[] @relation("LikeNotifications")
 
   @@unique([userId, postId])
   @@index([userId])
   @@index([postId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  type      NotificationType
+  message   String
+  isRead    Boolean  @default(false)
+  
+  recipientId String
+  recipient   User    @relation("UserNotifications", fields: [recipientId], references: [id], onDelete: Cascade)
+  
+  // Optional references for different notification types
+  postId    String?
+  post      Post?    @relation("PostNotifications", fields: [postId], references: [id], onDelete: Cascade)
+  
+  commentId String?
+  comment   Comment? @relation("CommentNotifications", fields: [commentId], references: [id], onDelete: Cascade)
+  
+  likeId    String?
+  like      Like?    @relation("LikeNotifications", fields: [likeId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([recipientId])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+enum NotificationType {
+  POST_LIKED
+  POST_COMMENTED
+  COMMENT_LIKED  // Future use
 }

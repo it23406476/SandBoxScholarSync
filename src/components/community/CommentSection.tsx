@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { communityApi } from '@/lib/community/api';
 import { formatDate } from '@/lib/community/helpers';
 
@@ -18,7 +19,12 @@ interface CommentSectionProps {
   onCommentAdded?: (comment: Comment) => void;
 }
 
-export function CommentSection({ postId, comments, currentUserId, onCommentAdded }: CommentSectionProps) {
+export function CommentSection({
+  postId,
+  comments,
+  currentUserId,
+  onCommentAdded,
+}: CommentSectionProps) {
   const [input, setInput] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const MAX_COMMENT_LENGTH = 300;
@@ -41,8 +47,10 @@ export function CommentSection({ postId, comments, currentUserId, onCommentAdded
 
   return (
     <div className="mt-8">
-      <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Comments ({comments.length})</h3>
-      {currentUserId && (
+      <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+        Comments ({comments.length})
+      </h3>
+      {currentUserId ? (
         <form onSubmit={handleSubmit} className="mb-6">
           <div className="relative">
             <textarea
@@ -64,11 +72,13 @@ export function CommentSection({ postId, comments, currentUserId, onCommentAdded
                   </p>
                 )}
               </div>
-              <span className={`text-xs ${
-                isCommentTooLong
-                  ? 'text-yellow-600 dark:text-yellow-400 font-medium'
-                  : 'text-gray-500 dark:text-gray-400'
-              }`}>
+              <span
+                className={`text-xs ${
+                  isCommentTooLong
+                    ? 'text-yellow-600 dark:text-yellow-400 font-medium'
+                    : 'text-gray-500 dark:text-gray-400'
+                }`}
+              >
                 {input.length}/{MAX_COMMENT_LENGTH}
               </span>
             </div>
@@ -81,13 +91,27 @@ export function CommentSection({ postId, comments, currentUserId, onCommentAdded
             {loading ? 'Posting...' : 'Post Comment'}
           </button>
         </form>
+      ) : (
+        <div className="mb-6 p-4 rounded-lg bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-center">
+          <p className="text-gray-600 dark:text-gray-300">
+            <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+              Log in
+            </Link>{' '}
+            to leave a comment.
+          </p>
+        </div>
       )}
       <div className="space-y-4">
         {comments.map((comment) => (
-          <div key={comment.id} className="p-4 rounded-lg bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600">
+          <div
+            key={comment.id}
+            className="p-4 rounded-lg bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600"
+          >
             <div className="flex items-start justify-between mb-2">
               <p className="font-semibold text-gray-900 dark:text-white">{comment.author.name}</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{formatDate(new Date(comment.createdAt))}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {formatDate(new Date(comment.createdAt))}
+              </p>
             </div>
             <p className="text-gray-700 dark:text-gray-300">{comment.content}</p>
           </div>

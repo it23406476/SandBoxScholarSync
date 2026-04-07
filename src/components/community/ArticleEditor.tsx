@@ -83,11 +83,18 @@ export function ArticleEditor({ currentUserId }: ArticleEditorProps) {
     if (!title.trim() || !content.trim() || !currentUserId) return;
     setLoading(true);
     try {
-      const attachmentsData = pdfFiles.map(pdf => ({
+      const attachmentsData = pdfFiles.map((pdf) => ({
         name: pdf.name,
         data: pdf.data,
       }));
-      await communityApi.createPost(title, content, category, imageUrl || undefined, currentUserId, attachmentsData);
+      await communityApi.createPost(
+        title,
+        content,
+        category,
+        imageUrl || undefined,
+        currentUserId,
+        attachmentsData
+      );
       router.push('/community');
     } catch (error) {
       console.error('Error creating post:', error);
@@ -123,6 +130,8 @@ export function ArticleEditor({ currentUserId }: ArticleEditorProps) {
             Category
           </label>
           <select
+            id="article-category"
+            title="Select article category"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -148,6 +157,7 @@ export function ArticleEditor({ currentUserId }: ArticleEditorProps) {
               <button
                 type="button"
                 onClick={handleRemoveImage}
+                aria-label="Remove image"
                 className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full hover:bg-red-700"
               >
                 <X size={20} />
@@ -169,6 +179,7 @@ export function ArticleEditor({ currentUserId }: ArticleEditorProps) {
             accept="image/*"
             onChange={handleImageSelect}
             className="hidden"
+            title="Upload featured image"
           />
         </div>
         <div>
@@ -195,6 +206,7 @@ export function ArticleEditor({ currentUserId }: ArticleEditorProps) {
             accept=".pdf,application/pdf"
             onChange={handlePdfSelect}
             className="hidden"
+            title="Upload PDF attachment"
           />
           {pdfFiles.length > 0 && (
             <div className="mt-4 space-y-2">
@@ -212,6 +224,7 @@ export function ArticleEditor({ currentUserId }: ArticleEditorProps) {
                   <button
                     type="button"
                     onClick={() => handleRemovePdf(pdf.id)}
+                    aria-label="Remove PDF attachment"
                     className="p-1 hover:bg-red-100 dark:hover:bg-red-900 rounded transition-colors"
                   >
                     <X size={18} className="text-red-600 dark:text-red-400" />

@@ -9,6 +9,7 @@ const PROTECTED_PREFIXES = [
   '/qna',
   '/ask',
   '/forum',
+  '/community',
   '/lecturer',
   '/student',
 ];

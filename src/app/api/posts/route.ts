@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getServerSessionUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,7 +15,10 @@ export async function GET(request: NextRequest) {
 
     interface WhereClause {
       category?: string;
-      OR?: Array<{ title?: { contains: string; mode: string } } | { content?: { contains: string; mode: string } }>;
+      OR?: Array<
+        | { title?: { contains: string; mode: string } }
+        | { content?: { contains: string; mode: string } }
+      >;
     }
     const whereClause: WhereClause = {};
     if (category && category !== 'all') whereClause.category = category;
@@ -24,12 +29,9 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    interface OrderBy {
-      createdAt?: string;
-      likeCount?: string;
-      commentCount?: string;
-    }
-    let orderBy: OrderBy = { createdAt: 'desc' };
+    let orderBy: Prisma.PostOrderByWithRelationInput | Prisma.PostOrderByWithRelationInput[] = {
+      createdAt: 'desc',
+    };
     if (sort === 'trending') orderBy = [{ likeCount: 'desc' }, { commentCount: 'desc' }];
     else if (sort === 'most-commented') orderBy = { commentCount: 'desc' };
     else if (sort === 'most-liked') orderBy = { likeCount: 'desc' };
@@ -56,18 +58,28 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const sessionUser = await getServerSessionUser();
+    if (!sessionUser) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { title, content, category, imageUrl, authorId, attachments } = await request.json();
 
     if (!title || !content || !category || !authorId) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    // Validate that the authorId matches the authenticated user
+    if (authorId !== sessionUser.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
     const post = await prisma.post.create({
-      data: { 
-        title, 
-        content, 
-        category, 
-        imageUrl, 
+      data: {
+        title,
+        content,
+        category,
+        imageUrl,
         authorId,
         attachments: attachments || [],
       },

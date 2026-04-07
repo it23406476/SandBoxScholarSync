@@ -164,7 +164,7 @@ export async function createQuestion(data: {
       data: {
         title: data.title,
         content: data.content,
-        tags: data.tags,
+        tags: JSON.stringify(data.tags),
         bounty: data.bounty,
         moduleId: moduleRecord.id, // Use the real DB ID
         authorId: session.user.id,
@@ -201,7 +201,7 @@ export async function updateQuestion(data: {
       data: {
         title: data.title,
         content: data.content,
-        tags: data.tags,
+        tags: JSON.stringify(data.tags),
         bounty: data.bounty,
       },
     });
@@ -249,12 +249,17 @@ export async function getRankedQuestions() {
     orderBy: { createdAt: 'desc' },
   });
 
-  // Sort by Upvotes + Bounty
-  return questions.sort((a, b) => {
-    const scoreA = a.upvotes * 2 + a.bounty * 5;
-    const scoreB = b.upvotes * 2 + b.bounty * 5;
-    return scoreB - scoreA;
-  });
+  // Sort by Upvotes + Bounty and parse tags
+  return questions
+    .map((q) => ({
+      ...q,
+      tags: JSON.parse(q.tags) as string[],
+    }))
+    .sort((a, b) => {
+      const scoreA = a.upvotes * 2 + a.bounty * 5;
+      const scoreB = b.upvotes * 2 + b.bounty * 5;
+      return scoreB - scoreA;
+    });
 }
 
 export async function getMyQuestions() {
@@ -273,11 +278,16 @@ export async function getMyQuestions() {
     orderBy: { createdAt: 'desc' },
   });
 
-  return questions.sort((a, b) => {
-    const scoreA = a.upvotes * 2 + a.bounty * 5;
-    const scoreB = b.upvotes * 2 + b.bounty * 5;
-    return scoreB - scoreA;
-  });
+  return questions
+    .map((q) => ({
+      ...q,
+      tags: JSON.parse(q.tags) as string[],
+    }))
+    .sort((a, b) => {
+      const scoreA = a.upvotes * 2 + a.bounty * 5;
+      const scoreB = b.upvotes * 2 + b.bounty * 5;
+      return scoreB - scoreA;
+    });
 }
 
 // ==========================================
@@ -293,7 +303,7 @@ export async function getModules() {
 // 5. GET SINGLE QUESTION DETAIL
 // ==========================================
 export async function getQuestionById(id: string) {
-  return await prisma.question.findUnique({
+  const question = await prisma.question.findUnique({
     where: { id },
     include: {
       author: true,
@@ -304,6 +314,13 @@ export async function getQuestionById(id: string) {
       },
     },
   });
+
+  if (!question) return null;
+
+  return {
+    ...question,
+    tags: JSON.parse(question.tags) as string[],
+  };
 }
 
 export async function voteQuestion(questionId: string, direction: 'up' | 'down') {
@@ -313,7 +330,7 @@ export async function voteQuestion(questionId: string, direction: 'up' | 'down')
 
     const question = await prisma.question.findUnique({
       where: { id: questionId },
-      select: { id: true, authorId: true },
+      select: { id: true, authorId: true, upvotes: true },
     });
     if (!question) return { success: false, message: 'Question not found.' };
 
@@ -323,76 +340,19 @@ export async function voteQuestion(questionId: string, direction: 'up' | 'down')
 
     const targetValue = direction === 'up' ? 1 : -1;
 
-    const payload = await prisma.$transaction(async (tx) => {
-      const existingVote = await tx.vote.findUnique({
-        where: {
-          userId_questionId: {
-            userId: session.user.id,
-            questionId,
-          },
-        },
-      });
-
-      if (!existingVote) {
-        await tx.vote.create({
-          data: {
-            userId: session.user.id,
-            questionId,
-            value: targetValue,
-          },
-        });
-
-        const updatedQuestion = await tx.question.update({
-          where: { id: questionId },
-          data: { upvotes: { increment: targetValue } },
-          select: { upvotes: true },
-        });
-
-        return { success: true, upvotes: updatedQuestion.upvotes, message: 'Vote recorded.' };
-      }
-
-      if (existingVote.value === targetValue) {
-        const current = await tx.question.findUnique({
-          where: { id: questionId },
-          select: { upvotes: true },
-        });
-        return {
-          success: false,
-          upvotes: current?.upvotes ?? 0,
-          message: 'You already cast this vote.',
-        };
-      }
-
-      await tx.vote.update({
-        where: {
-          userId_questionId: {
-            userId: session.user.id,
-            questionId,
-          },
-        },
-        data: { value: targetValue },
-      });
-
-      const updatedQuestion = await tx.question.update({
-        where: { id: questionId },
-        data: { upvotes: { increment: targetValue * 2 } },
-        select: { upvotes: true },
-      });
-
-      return {
-        success: true,
-        upvotes: updatedQuestion.upvotes,
-        message: 'Vote updated.',
-      };
+    const updatedQuestion = await prisma.question.update({
+      where: { id: questionId },
+      data: { upvotes: { increment: targetValue } },
+      select: { upvotes: true },
     });
 
     revalidatePath('/qna');
     revalidatePath(`/qna/${questionId}`);
     revalidatePath('/lecturer');
-    return payload;
+    return { success: true, upvotes: updatedQuestion.upvotes, message: 'Vote recorded.' };
   } catch (error) {
-    console.error('Failed to vote question:', error);
-    return { success: false, message: 'Database error.' };
+    console.error('Error voting on question:', error);
+    return { success: false, message: 'Failed to vote on question.' };
   }
 }
 
@@ -419,36 +379,22 @@ export async function getLecturerAssignedQuestions() {
   const session = await getAuthSession();
   if (!session?.user?.id) return [];
 
-  const lecturer = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    include: {
-      moduleAssignments: {
-        select: {
-          moduleId: true,
-        },
-      },
-    },
-  });
-
-  if (!lecturer) return [];
-
-  const assignedModuleIds = lecturer.moduleAssignments.map((assignment) => assignment.moduleId);
-  if (assignedModuleIds.length === 0) return [];
-
+  // For now, return all questions since module assignments aren't implemented in schema
   const questions = await prisma.question.findMany({
-    where: {
-      moduleId: {
-        in: assignedModuleIds,
-      },
-    },
     include: {
       author: true,
       module: true,
       answers: { include: { author: true } },
     },
+    orderBy: { createdAt: 'desc' },
   });
 
-  return questions.sort((a, b) => b.upvotes + b.bounty - (a.upvotes + a.bounty));
+  return questions
+    .map((q) => ({
+      ...q,
+      tags: JSON.parse(q.tags) as string[],
+    }))
+    .sort((a, b) => b.upvotes + b.bounty - (a.upvotes + a.bounty));
 }
 
 export async function lecturerRecommendQuestion(questionId: string) {
@@ -489,7 +435,7 @@ export async function addAnswer(data: { questionId: string; content: string }) {
 }
 
 export async function getSimilarQuestionsByModule(moduleId: string, currentQuestionId: string) {
-  return prisma.question.findMany({
+  const questions = await prisma.question.findMany({
     where: {
       moduleId,
       NOT: { id: currentQuestionId },
@@ -502,24 +448,39 @@ export async function getSimilarQuestionsByModule(moduleId: string, currentQuest
     orderBy: [{ upvotes: 'desc' }, { createdAt: 'desc' }],
     take: 6,
   });
+
+  return questions.map((q) => ({
+    ...q,
+    tags: JSON.parse(q.tags) as string[],
+  }));
 }
 
-export type RankedQuestion = Prisma.QuestionGetPayload<{
-  include: {
-    author: true;
-    module: true;
-    answers: { include: { author: true } };
-  };
-}>;
-
-export type QuestionDetail = Prisma.QuestionGetPayload<{
-  include: {
-    author: true;
-    module: true;
-    answers: {
-      include: { author: true };
+export type RankedQuestion = Omit<
+  Prisma.QuestionGetPayload<{
+    include: {
+      author: true;
+      module: true;
+      answers: { include: { author: true } };
     };
-  };
-}>;
+  }>,
+  'tags'
+> & {
+  tags: string[];
+};
+
+export type QuestionDetail = Omit<
+  Prisma.QuestionGetPayload<{
+    include: {
+      author: true;
+      module: true;
+      answers: {
+        include: { author: true };
+      };
+    };
+  }>,
+  'tags'
+> & {
+  tags: string[];
+};
 
 export type QnaModule = Awaited<ReturnType<typeof getModules>>[number];

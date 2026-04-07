@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -25,6 +26,7 @@ async function main() {
     create: {
       name: 'Sams Senarath',
       email: 'sams@student.sliit.lk',
+      password: await bcrypt.hash('password123', 10),
       role: 'STUDENT',
       points: 500,
       badges: JSON.stringify(['Beta Tester']),
@@ -37,6 +39,7 @@ async function main() {
     create: {
       name: 'Kamal Perera',
       email: 'kamal@student.sliit.lk',
+      password: await bcrypt.hash('password123', 10),
       role: 'STUDENT',
       points: 200,
     },
@@ -49,6 +52,7 @@ async function main() {
     create: {
       name: 'Dr. Sarah',
       email: 'sarah@lecturer.sliit.lk',
+      password: await bcrypt.hash('password123', 10),
       role: 'LECTURER',
       points: 1000,
       badges: JSON.stringify(['Verified Educator']),
@@ -112,7 +116,8 @@ async function main() {
   const post1 = await prisma.post.create({
     data: {
       title: 'React Best Practices for 2024',
-      content: 'I wanted to share some React best practices I learned recently. Using hooks properly, managing state efficiently, and avoiding unnecessary re-renders are key concepts that improved my performance significantly.',
+      content:
+        'I wanted to share some React best practices I learned recently. Using hooks properly, managing state efficiently, and avoiding unnecessary re-renders are key concepts that improved my performance significantly.',
       category: 'technology',
       imageUrl: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&h=400&fit=crop',
       authorId: student1.id,
@@ -123,7 +128,8 @@ async function main() {
   const post2 = await prisma.post.create({
     data: {
       title: 'Database Design Fundamentals',
-      content: 'Understanding normalization, relationships, and indexing is crucial for building scalable applications. In this article, I break down the fundamental concepts of relational database design with practical examples.',
+      content:
+        'Understanding normalization, relationships, and indexing is crucial for building scalable applications. In this article, I break down the fundamental concepts of relational database design with practical examples.',
       category: 'database',
       imageUrl: 'https://images.unsplash.com/photo-1516321318423-f06f70d504d0?w=600&h=400&fit=crop',
       authorId: lecturer.id,
@@ -134,7 +140,8 @@ async function main() {
   const post3 = await prisma.post.create({
     data: {
       title: 'Getting Started with TypeScript',
-      content: 'TypeScript has changed the way I write JavaScript. The type safety it provides catches bugs before they reach production. Here are some tips for beginners transitioning from JavaScript to TypeScript.',
+      content:
+        'TypeScript has changed the way I write JavaScript. The type safety it provides catches bugs before they reach production. Here are some tips for beginners transitioning from JavaScript to TypeScript.',
       category: 'programming',
       imageUrl: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&h=400&fit=crop',
       authorId: student2.id,
@@ -145,7 +152,8 @@ async function main() {
   const post4 = await prisma.post.create({
     data: {
       title: 'Cybersecurity in Modern Applications',
-      content: 'Security should not be an afterthought. From implementing OAuth to preventing SQL injection, here\'s a comprehensive guide to securing your web applications.',
+      content:
+        "Security should not be an afterthought. From implementing OAuth to preventing SQL injection, here's a comprehensive guide to securing your web applications.",
       category: 'security',
       imageUrl: 'https://images.unsplash.com/photo-1516321318423-f06f70d504d0?w=600&h=400&fit=crop',
       authorId: lecturer.id,
@@ -196,7 +204,7 @@ async function main() {
 
   const comment6 = await prisma.comment.create({
     data: {
-      content: 'TypeScript definitely has a learning curve, but it\'s worth the investment!',
+      content: "TypeScript definitely has a learning curve, but it's worth the investment!",
       authorId: lecturer.id,
       postId: post3.id,
     },
@@ -266,7 +274,50 @@ async function main() {
     data: { likeCount: 1, commentCount: 0 },
   });
 
-  console.log('✅ Database seeded successfully with expanded test data!');
+  // 9. Create Test Notifications
+  await prisma.notification.create({
+    data: {
+      type: 'POST_LIKED',
+      message: `${student2.name} liked your post "React Best Practices for 2024"`,
+      recipientId: student1.id,
+      postId: post1.id,
+      likeId: (await prisma.like.findFirst({ where: { userId: student2.id, postId: post1.id } }))!
+        .id,
+    },
+  });
+
+  await prisma.notification.create({
+    data: {
+      type: 'POST_LIKED',
+      message: `${lecturer.name} liked your post "React Best Practices for 2024"`,
+      recipientId: student1.id,
+      postId: post1.id,
+      likeId: (await prisma.like.findFirst({ where: { userId: lecturer.id, postId: post1.id } }))!
+        .id,
+    },
+  });
+
+  await prisma.notification.create({
+    data: {
+      type: 'POST_COMMENTED',
+      message: `${student2.name} commented on your post "React Best Practices for 2024"`,
+      recipientId: student1.id,
+      postId: post1.id,
+      commentId: comment1.id,
+    },
+  });
+
+  await prisma.notification.create({
+    data: {
+      type: 'POST_COMMENTED',
+      message: `${lecturer.name} commented on your post "React Best Practices for 2024"`,
+      recipientId: student1.id,
+      postId: post1.id,
+      commentId: comment3.id,
+    },
+  });
+
+  console.log('✅ Database seeded successfully with expanded test data and notifications!');
 }
 
 main()

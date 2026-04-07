@@ -138,3 +138,8 @@ export const authOptions: NextAuthOptions = {
 export function getAuthSession() {
   return getServerSession(authOptions);
 }
+
+export async function getServerSessionUser() {
+  const session = await getServerSession(authOptions);
+  return session?.user;
+}

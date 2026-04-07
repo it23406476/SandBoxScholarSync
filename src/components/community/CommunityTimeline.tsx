@@ -19,6 +19,7 @@ export function CommunityTimeline({ currentUserId }: CommunityTimelineProps) {
     searchQuery,
     sortBy,
     currentPage,
+    loadUserLikes,
   } = useCommunityStore();
 
   React.useEffect(() => {
@@ -39,8 +40,24 @@ export function CommunityTimeline({ currentUserId }: CommunityTimelineProps) {
       }
     };
 
+    const loadUserLikesData = async () => {
+      if (currentUserId) {
+        await loadUserLikes(currentUserId);
+      }
+    };
+
     fetchPosts();
-  }, [selectedCategory, searchQuery, sortBy, currentPage, setPosts, setLoading]);
+    loadUserLikesData();
+  }, [
+    selectedCategory,
+    searchQuery,
+    sortBy,
+    currentPage,
+    currentUserId,
+    setPosts,
+    setLoading,
+    loadUserLikes,
+  ]);
 
   if (loading) {
     return (

@@ -3,13 +3,15 @@
 import React from 'react';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import { CommunityTimeline } from '@/components/community/CommunityTimeline';
 import { SearchBar } from '@/components/community/SearchBar';
 import { FilterBar } from '@/components/community/Filterbar';
 
-const CURRENT_USER_ID = 'user-123';
-
 export default function CommunityPage() {
+  const { data: session } = useSession();
+  const currentUserId = session?.user?.id;
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8">
       <div className="max-w-6xl mx-auto px-4">
@@ -32,7 +34,7 @@ export default function CommunityPage() {
           <SearchBar />
           <FilterBar />
         </div>
-        <CommunityTimeline currentUserId={CURRENT_USER_ID} />
+        <CommunityTimeline currentUserId={currentUserId} />
       </div>
     </div>
   );

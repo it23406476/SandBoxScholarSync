@@ -37,6 +37,7 @@ interface CommunityStore {
   setPage: (page: number) => void;
   addUserLike: (postId: string) => void;
   removeUserLike: (postId: string) => void;
+  loadUserLikes: (userId: string) => Promise<void>;
   reset: () => void;
 }
 
@@ -73,6 +74,17 @@ export const useCommunityStore = create<CommunityStore>((set) => ({
       newLikes.delete(postId);
       return { userLikedPosts: newLikes };
     }),
+
+  loadUserLikes: async (userId) => {
+    try {
+      const response = await fetch(`/api/posts/user/${userId}/likes`);
+      if (!response.ok) throw new Error('Failed to fetch user likes');
+      const data = await response.json();
+      set({ userLikedPosts: new Set(data.likedPostIds) });
+    } catch (error) {
+      console.error('Error loading user likes:', error);
+    }
+  },
 
   reset: () =>
     set({

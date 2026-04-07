@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Heart, MessageCircle } from 'lucide-react';
 import { formatDate, truncateContent } from '@/lib/community/helpers';
 import { useCommunityStore } from '@/lib/community/communityStore';
@@ -22,13 +23,18 @@ interface ArticleCardProps {
 }
 
 export function ArticleCard({ post, currentUserId }: ArticleCardProps) {
+  const router = useRouter();
   const { userLikedPosts, addUserLike, removeUserLike } = useCommunityStore();
   const isLiked = userLikedPosts.has(post.id);
   const [likeCount, setLikeCount] = React.useState(post.likeCount);
 
   const handleLike = async (e: React.MouseEvent) => {
     e.preventDefault();
-    if (!currentUserId) return;
+    e.stopPropagation();
+    if (!currentUserId) {
+      router.push('/login');
+      return;
+    }
     try {
       const result = await communityApi.toggleLike(post.id, currentUserId);
       if (result.liked) {

@@ -11,7 +11,7 @@ interface BottomNavProps {
 
 const mainNav = [
   { to: '/qna', icon: HelpCircle, label: 'Q&A' },
-  { to: '/forum', icon: MessageSquare, label: 'Forum' },
+  { to: '/community', icon: MessageSquare, label: 'Forum' },
 ];
 
 export function BottomNav({} /* role */ : BottomNavProps) {
