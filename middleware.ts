@@ -5,10 +5,8 @@ import { getToken } from 'next-auth/jwt';
 const AUTH_ROUTES = ['/login', '/register', '/forgot-password'];
 const PROTECTED_PREFIXES = [
   '/dashboard',
-  '/hub',
   '/qna',
   '/ask',
-  '/forum',
   '/community',
   '/lecturer',
   '/modules',
