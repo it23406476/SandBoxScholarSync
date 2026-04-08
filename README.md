@@ -81,11 +81,13 @@ npm run seed
 
 After seeding, you can sign in with:
 
-- `sams@student.sliit.lk`
-- `kamal@student.sliit.lk`
-- `sarah@lecturer.sliit.lk`
+- `sampleprojecte@gmail.com` (password: `samssena#21321`)
+- `ashaperera@gmail.com` (password: `asha#123`)
+- `kamal@student.sliit.lk` (password: `Password@123`)
+- `sams@student.sliit.lk` (password: `Password@123`)
+- `sarah@lecturer.sliit.lk` (password: `Password@123`)
 
-Password for all seed users:
+Default password for legacy seed users:
 
 - `Password@123`
 
