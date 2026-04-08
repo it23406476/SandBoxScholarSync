@@ -11,6 +11,7 @@ import {
   lecturerRecommendQuestion,
   type RankedQuestion,
 } from '@/actions/qna.actions';
+import { LecturerInsights } from '@/components/lecturer/LecturerInsights';
 
 const LecturerPage = () => {
   const [questions, setQuestions] = useState<RankedQuestion[]>([]);
@@ -58,6 +59,8 @@ const LecturerPage = () => {
           Questions from your assigned modules, sorted by rank (upvotes + bounty).
         </p>
       </div>
+
+      <LecturerInsights />
 
       {questions.length === 0 ? (
         <Card>

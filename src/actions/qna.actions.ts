@@ -239,8 +239,21 @@ export async function deleteQuestion(questionId: string) {
 // ==========================================
 // 3. GET RANKED FEED (REAL DB QUERY)
 // ==========================================
-export async function getRankedQuestions() {
+export async function getRankedQuestions(timeRange: 'all' | 'week' | 'month' = 'all') {
+  const now = new Date();
+  const createdAtFilter =
+    timeRange === 'week'
+      ? { gte: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000) }
+      : timeRange === 'month'
+        ? { gte: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000) }
+        : undefined;
+
   const questions = await prisma.question.findMany({
+    where: createdAtFilter
+      ? {
+          createdAt: createdAtFilter,
+        }
+      : undefined,
     include: {
       author: true,
       module: true,

@@ -70,6 +70,41 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 Prisma schema is in `prisma/schema.prisma`. To apply migrations or seed data, use the provided npm scripts.
 
+### Local DB + Auth Quick Setup
+
+If login fails locally, ensure your database schema is applied and seed users have passwords:
+
+```bash
+npx prisma db push
+npm run seed
+```
+
+After seeding, you can sign in with:
+
+- `sampleprojecte@gmail.com` (password: `samssena#21321`)
+- `ashaperera@gmail.com` (password: `asha#123`)
+- `kamal@student.sliit.lk` (password: `Password@123`)
+- `sams@student.sliit.lk` (password: `Password@123`)
+- `sarah@lecturer.sliit.lk` (password: `Password@123`)
+
+Default password for legacy seed users:
+
+- `Password@123`
+
+Also ensure local env vars are set:
+
+- `DATABASE_URL`
+- `NEXTAUTH_SECRET`
+- `NEXTAUTH_URL=http://localhost:3000`
+
+If `npm run seed` fails with "Can't reach database server", your `DATABASE_URL` is not reachable from your machine.
+
+Quick checks:
+
+- Verify the host/port in `DATABASE_URL` is correct and publicly reachable.
+- If using a hosted DB (e.g., Supabase), ensure the project is running and network access is allowed.
+- If using local Postgres, ensure the service is started before running `npx prisma db push` and `npm run seed`.
+
 ## License
 
 See [LICENSE](LICENSE).

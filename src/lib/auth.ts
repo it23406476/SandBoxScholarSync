@@ -68,14 +68,16 @@ const providers: NextAuthOptions['providers'] = [
 ];
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
   adapter: PrismaAdapter(prisma),
   useSecureCookies: isProduction,
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60,
+    maxAge: 12 * 60 * 60,
+    updateAge: 60 * 60,
   },
   jwt: {
-    maxAge: 30 * 24 * 60 * 60,
+    maxAge: 12 * 60 * 60,
   },
   pages: {
     signIn: '/login',
@@ -137,4 +139,9 @@ export const authOptions: NextAuthOptions = {
 
 export function getAuthSession() {
   return getServerSession(authOptions);
+}
+
+export async function getServerSessionUser() {
+  const session = await getAuthSession();
+  return session?.user ?? null;
 }

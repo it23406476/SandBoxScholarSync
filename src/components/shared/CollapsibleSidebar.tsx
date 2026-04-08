@@ -33,12 +33,11 @@ type SidebarNavItem = {
 
 const studentNav: SidebarNavItem[] = [
   { to: '/dashboard', icon: Home, label: 'Dashboard' },
-  { to: '/hub', icon: MessageSquare, label: 'Q&A Forum' },
   { to: '/qna', icon: HelpCircle, label: 'Q&A', end: true },
   { to: '/qna/my', icon: HelpCircle, label: 'My Questions', end: true },
   { to: '/ask', icon: PlusCircle, label: 'Ask Question' },
-  { to: '/forum', icon: BookOpen, label: 'Knowledge Forum' },
-  { to: '/profile', icon: User, label: 'Profile' },
+  { to: '/community', icon: BookOpen, label: 'Community' },
+  { to: '/student/profile', icon: User, label: 'Profile' },
 ];
 
 const lecturerNav: SidebarNavItem[] = [
@@ -46,7 +45,7 @@ const lecturerNav: SidebarNavItem[] = [
   { to: '/qna', icon: HelpCircle, label: 'Q&A', end: true },
   { to: '/qna/my', icon: HelpCircle, label: 'My Questions', end: true },
   { to: '/modules', icon: BookOpen, label: 'Manage Modules' },
-  { to: '/forum', icon: MessageSquare, label: 'Forum' },
+  { to: '/community', icon: MessageSquare, label: 'Community' },
   { to: '/analytics', icon: BarChart3, label: 'Analytics' },
   { to: '/profile', icon: User, label: 'Profile' },
 ];

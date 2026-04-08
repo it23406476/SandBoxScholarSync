@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
 
 export default function StudentDashboardPage() {
-  redirect('/hub');
+  redirect('/student/dashboard');
 }

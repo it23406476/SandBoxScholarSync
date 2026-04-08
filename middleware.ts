@@ -5,11 +5,12 @@ import { getToken } from 'next-auth/jwt';
 const AUTH_ROUTES = ['/login', '/register', '/forgot-password'];
 const PROTECTED_PREFIXES = [
   '/dashboard',
-  '/hub',
   '/qna',
   '/ask',
-  '/forum',
+  '/community',
   '/lecturer',
+  '/modules',
+  '/analytics',
   '/student',
 ];
 
@@ -18,7 +19,7 @@ export async function middleware(req: NextRequest) {
 
   const token = await getToken({
     req,
-    secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
+    secret: process.env.NEXTAUTH_SECRET,
   });
 
   const isProtectedRoute = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix));

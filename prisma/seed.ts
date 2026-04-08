@@ -1,9 +1,13 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('Seeding database... 🌱');
+  const defaultPassword = await bcrypt.hash('Password@123', 10);
+  const sampleStudentPassword = await bcrypt.hash('samssena#21321', 10);
+  const sampleLecturerPassword = await bcrypt.hash('asha#123', 10);
 
   // 1. Create Academic Modules
   const itpm = await prisma.module.upsert({
@@ -20,12 +24,19 @@ async function main() {
 
   // 2. Create Test Students
   const student1 = await prisma.user.upsert({
-    where: { email: 'sams@student.sliit.lk' },
-    update: {},
+    where: { email: 'sampleprojecte@gmail.com' },
+    update: {
+      name: 'Sams Senarath',
+      role: 'STUDENT',
+      password: sampleStudentPassword,
+      points: 500,
+      badges: ['Beta Tester'],
+    },
     create: {
       name: 'Sams Senarath',
-      email: 'sams@student.sliit.lk',
+      email: 'sampleprojecte@gmail.com',
       role: 'STUDENT',
+      password: sampleStudentPassword,
       points: 500,
       badges: ['Beta Tester'],
     },
@@ -33,25 +44,63 @@ async function main() {
 
   const student2 = await prisma.user.upsert({
     where: { email: 'kamal@student.sliit.lk' },
-    update: {},
+    update: {
+      password: defaultPassword,
+    },
     create: {
       name: 'Kamal Perera',
       email: 'kamal@student.sliit.lk',
       role: 'STUDENT',
+      password: defaultPassword,
       points: 200,
     },
   });
 
   // 3. Create Test Lecturer
   const lecturer = await prisma.user.upsert({
-    where: { email: 'sarah@lecturer.sliit.lk' },
-    update: {},
-    create: {
-      name: 'Dr. Sarah',
-      email: 'sarah@lecturer.sliit.lk',
+    where: { email: 'ashaperera@gmail.com' },
+    update: {
+      name: 'Asha Perera',
       role: 'LECTURER',
+      password: sampleLecturerPassword,
       points: 1000,
       badges: ['Verified Educator'],
+    },
+    create: {
+      name: 'Asha Perera',
+      email: 'ashaperera@gmail.com',
+      role: 'LECTURER',
+      password: sampleLecturerPassword,
+      points: 1000,
+      badges: ['Verified Educator'],
+    },
+  });
+
+  await prisma.user.upsert({
+    where: { email: 'sams@student.sliit.lk' },
+    update: {
+      password: defaultPassword,
+    },
+    create: {
+      name: 'Legacy Student',
+      email: 'sams@student.sliit.lk',
+      role: 'STUDENT',
+      password: defaultPassword,
+      points: 250,
+    },
+  });
+
+  await prisma.user.upsert({
+    where: { email: 'sarah@lecturer.sliit.lk' },
+    update: {
+      password: defaultPassword,
+    },
+    create: {
+      name: 'Legacy Lecturer',
+      email: 'sarah@lecturer.sliit.lk',
+      role: 'LECTURER',
+      password: defaultPassword,
+      points: 700,
     },
   });
 
@@ -129,6 +178,7 @@ async function main() {
   });
 
   console.log('✅ Database seeded successfully with expanded test data!');
+  console.log('🔐 Seed login password for test users: Password@123');
 }
 
 main()

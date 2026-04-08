@@ -27,6 +27,7 @@ export default function QuestionsPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [selectedModule, setSelectedModule] = useState<string>('all');
+  const [selectedTimeRange, setSelectedTimeRange] = useState<'all' | 'week' | 'month'>('all');
   const [search, setSearch] = useState('');
 
   const normalizedSearch = search.trim().toLowerCase();
@@ -34,14 +35,15 @@ export default function QuestionsPage() {
   // Fetch Real Data on Mount
   useEffect(() => {
     async function fetchData() {
-      const fetchedQuestions = await getRankedQuestions();
+      setIsLoading(true);
+      const fetchedQuestions = await getRankedQuestions(selectedTimeRange);
       const fetchedModules = await getModules();
       setQuestions(fetchedQuestions);
       setModules(fetchedModules);
       setIsLoading(false);
     }
     fetchData();
-  }, []);
+  }, [selectedTimeRange]);
 
   // Filter the Ranked Questions locally
   const filtered = questions
@@ -57,7 +59,7 @@ export default function QuestionsPage() {
 
   return (
     <div className="p-4 md:p-6 animate-fade-in flex flex-col h-full min-h-0 gap-4">
-      <div className="max-w-4xl mx-auto w-full flex-shrink-0 space-y-4">
+      <div className="max-w-4xl mx-auto w-full shrink-0 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl md:text-2xl font-bold">All Questions</h2>
           <div className="flex items-center gap-2">
@@ -79,6 +81,21 @@ export default function QuestionsPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
+          </div>
+          <div className="w-full sm:w-52">
+            <Select
+              value={selectedTimeRange}
+              onValueChange={(value) => setSelectedTimeRange(value as 'all' | 'week' | 'month')}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="All Time" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Time</SelectItem>
+                <SelectItem value="week">Last 7 Days</SelectItem>
+                <SelectItem value="month">Last 30 Days</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className="w-full sm:w-52">
             <Select value={selectedModule} onValueChange={setSelectedModule}>
