@@ -134,7 +134,9 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
           onClick={handleBold}
           title="Bold (Ctrl+B)"
           className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors ${
-            isBold ? 'bg-gray-200 dark:bg-slate-600 text-blue-600' : 'text-gray-700 dark:text-gray-300'
+            isBold
+              ? 'bg-gray-200 dark:bg-slate-600 text-blue-600'
+              : 'text-gray-700 dark:text-gray-300'
           }`}
         >
           <Bold size={16} />
@@ -218,14 +220,23 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
                     onClick={() => handleColor(color.value)}
                     title={color.label}
                     className={`w-7 h-7 rounded-full border-2 border-gray-200 dark:border-slate-600 hover:scale-110 transition-transform ${
-                      color.value === '#000000' ? 'bg-black' :
-                      color.value === '#4B5563' ? 'bg-gray-600' :
-                      color.value === '#DC2626' ? 'bg-red-600' :
-                      color.value === '#EA580C' ? 'bg-orange-600' :
-                      color.value === '#16A34A' ? 'bg-green-600' :
-                      color.value === '#2563EB' ? 'bg-blue-600' :
-                      color.value === '#9333EA' ? 'bg-purple-600' :
-                      color.value === '#DB2777' ? 'bg-pink-600' : ''
+                      color.value === '#000000'
+                        ? 'bg-black'
+                        : color.value === '#4B5563'
+                          ? 'bg-gray-600'
+                          : color.value === '#DC2626'
+                            ? 'bg-red-600'
+                            : color.value === '#EA580C'
+                              ? 'bg-orange-600'
+                              : color.value === '#16A34A'
+                                ? 'bg-green-600'
+                                : color.value === '#2563EB'
+                                  ? 'bg-blue-600'
+                                  : color.value === '#9333EA'
+                                    ? 'bg-purple-600'
+                                    : color.value === '#DB2777'
+                                      ? 'bg-pink-600'
+                                      : ''
                     }`}
                   />
                 ))}

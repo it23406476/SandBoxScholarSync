@@ -48,7 +48,10 @@ export default function ArticleDetailPage() {
   const isLiked = userLikedPosts.has(postId);
   const [showFlagForm, setShowFlagForm] = React.useState(false);
   const [flagReason, setFlagReason] = React.useState('');
-  const [flagMessage, setFlagMessage] = React.useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [flagMessage, setFlagMessage] = React.useState<{
+    type: 'success' | 'error';
+    text: string;
+  } | null>(null);
 
   const FLAG_REASONS = [
     'Spam or misleading',
@@ -176,7 +179,9 @@ export default function ArticleDetailPage() {
             let attachments: Attachment[] = [];
             try {
               attachments = post.attachments ? JSON.parse(post.attachments) : [];
-            } catch { /* ignore parse errors */ }
+            } catch {
+              /* ignore parse errors */
+            }
             if (attachments.length === 0) return null;
             return (
               <div className="mb-8 p-4 bg-gray-50 dark:bg-slate-700/50 rounded-lg border border-gray-200 dark:border-slate-600">
@@ -198,7 +203,10 @@ export default function ArticleDetailPage() {
                       <span className="flex-1 text-sm font-medium text-gray-700 dark:text-gray-300 truncate">
                         {file.name}
                       </span>
-                      <Download size={18} className="text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+                      <Download
+                        size={18}
+                        className="text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
+                      />
                     </a>
                   ))}
                 </div>
