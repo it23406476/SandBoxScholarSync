@@ -13,16 +13,12 @@ export async function GET(request: NextRequest) {
     const limit = 10;
     const skip = (page - 1) * limit;
 
-    interface WhereClause {
-      category?: string;
-      OR?: Array<{ title?: { contains: string; mode: string } } | { content?: { contains: string; mode: string } }>;
-    }
-    const whereClause: WhereClause = {};
+    const whereClause: Prisma.PostWhereInput = {};
     if (category && category !== 'all') whereClause.category = category;
     if (search) {
       whereClause.OR = [
-        { title: { contains: search, mode: 'insensitive' } },
-        { content: { contains: search, mode: 'insensitive' } },
+        { title: { contains: search, mode: Prisma.QueryMode.insensitive } },
+        { content: { contains: search, mode: Prisma.QueryMode.insensitive } },
       ];
     }
 
@@ -61,7 +57,12 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    return NextResponse.json({ posts: normalizedPosts, total, page, pages: Math.ceil(total / limit) });
+    return NextResponse.json({
+      posts: normalizedPosts,
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+    });
   } catch (error) {
     console.error('Error fetching posts:', error);
     return NextResponse.json({ error: 'Failed to fetch posts' }, { status: 500 });
@@ -84,11 +85,11 @@ export async function POST(request: NextRequest) {
     const attachmentsValue = JSON.stringify(Array.isArray(attachments) ? attachments : []);
 
     const post = await prisma.post.create({
-      data: { 
-        title, 
-        content, 
-        category, 
-        imageUrl, 
+      data: {
+        title,
+        content,
+        category,
+        imageUrl,
         authorId: sessionUser.id,
         attachments: attachmentsValue,
       },
