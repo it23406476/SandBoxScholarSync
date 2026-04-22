@@ -10,7 +10,6 @@ import { signIn } from 'next-auth/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { registerUser } from '@/actions/auth.actions';
 
 const registerSchema = z
   .object({
@@ -51,14 +50,20 @@ export default function RegisterPage() {
     setIsSubmitting(true);
     setError('');
 
-    const result = await registerUser({
-      name: values.name,
-      email: values.email,
-      password: values.password,
-      role: values.role,
+    const response = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: values.name,
+        email: values.email,
+        password: values.password,
+        role: values.role,
+      }),
     });
 
-    if (!result.success) {
+    const result = (await response.json()) as { success?: boolean; message?: string };
+
+    if (!response.ok || !result.success) {
       setError(result.message ?? 'Unable to create account.');
       setIsSubmitting(false);
       return;
