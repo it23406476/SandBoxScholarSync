@@ -21,7 +21,10 @@ export async function POST(request: NextRequest) {
     const isFileDatabase = databaseUrl.startsWith('file:');
 
     if (!name || !email || !password || !role) {
-      return NextResponse.json({ success: false, message: 'All fields are required.' }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: 'All fields are required.' },
+        { status: 400 }
+      );
     }
 
     if (process.env.VERCEL && isFileDatabase) {
@@ -62,7 +65,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          message: 'Database connection failed. Check your production DATABASE_URL and run migrations.',
+          message:
+            'Database connection failed. Check your production DATABASE_URL and run migrations.',
         },
         { status: 503 }
       );

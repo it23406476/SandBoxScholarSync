@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signIn } from 'next-auth/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -50,32 +49,32 @@ export default function RegisterPage() {
     setIsSubmitting(true);
     setError('');
 
-    const response = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: values.name,
-        email: values.email,
-        password: values.password,
-        role: values.role,
-      }),
-    });
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: values.name,
+          email: values.email,
+          password: values.password,
+          role: values.role,
+        }),
+      });
 
-    const result = (await response.json()) as { success?: boolean; message?: string };
+      const result = (await response.json()) as { success?: boolean; message?: string };
 
-    if (!response.ok || !result.success) {
-      setError(result.message ?? 'Unable to create account.');
+      if (!response.ok || !result.success) {
+        setError(result.message ?? 'Unable to create account.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Keep signup independent from NextAuth callback configuration.
+      router.push('/login?registered=1');
+    } catch {
+      setError('Unable to create account right now. Please try again.');
       setIsSubmitting(false);
-      return;
     }
-
-    await signIn('credentials', {
-      email: values.email,
-      password: values.password,
-      redirect: false,
-    });
-
-    router.push('/dashboard');
   };
 
   return (
