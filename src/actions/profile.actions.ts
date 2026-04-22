@@ -74,27 +74,32 @@ export async function getUserProfileData(): Promise<UserProfileData> {
     throw new Error('Unauthorized');
   }
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      role: true,
-      points: true,
-      badges: true,
-      questions: {
-        select: {
-          upvotes: true,
+  let user;
+  try {
+    user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        points: true,
+        badges: true,
+        questions: {
+          select: {
+            upvotes: true,
+          },
+        },
+        answers: {
+          select: {
+            upvotes: true,
+          },
         },
       },
-      answers: {
-        select: {
-          upvotes: true,
-        },
-      },
-    },
-  });
+    });
+  } catch {
+    throw new Error('Database connection failed. Please try again later.');
+  }
 
   if (!user) {
     throw new Error('User not found');
