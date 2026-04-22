@@ -1,5 +1,6 @@
 'use server';
 
+import { redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import { getAuthSession } from '@/lib/auth';
 
@@ -71,7 +72,7 @@ const LEGACY_BADGE_ICON_MAP: Record<string, string> = {
 export async function getUserProfileData(): Promise<UserProfileData> {
   const session = await getAuthSession();
   if (!session?.user?.id) {
-    throw new Error('Unauthorized');
+    redirect('/login');
   }
 
   let user;
