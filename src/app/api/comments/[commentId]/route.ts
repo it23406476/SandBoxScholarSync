@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSessionUser } from '@/lib/auth';
 
-export async function PATCH(request: NextRequest, { params }: { params: Promise<{ commentId: string }> }) {
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ commentId: string }> }
+) {
   try {
     const sessionUser = await getServerSessionUser();
     if (!sessionUser) {
@@ -42,7 +45,10 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ commentId: string }> }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ commentId: string }> }
+) {
   try {
     const sessionUser = await getServerSessionUser();
     if (!sessionUser) {
@@ -89,10 +95,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     // Delete related notifications
     await prisma.notification.deleteMany({
       where: {
-        OR: [
-          { commentId: commentId },
-          { commentId: { in: replyIds } },
-        ],
+        OR: [{ commentId: commentId }, { commentId: { in: replyIds } }],
       },
     });
 

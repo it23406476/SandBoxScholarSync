@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSessionUser } from '@/lib/auth';
 
-export async function PATCH(request: NextRequest, { params }: { params: Promise<{ notificationId: string }> }) {
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ notificationId: string }> }
+) {
   try {
     const sessionUser = await getServerSessionUser();
     if (!sessionUser) {

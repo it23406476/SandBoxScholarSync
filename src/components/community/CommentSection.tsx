@@ -32,7 +32,14 @@ interface CommentItemProps {
   isReply?: boolean;
 }
 
-function CommentItem({ comment, currentUserId, postId, onCommentUpdated, onCommentDeleted, isReply }: CommentItemProps) {
+function CommentItem({
+  comment,
+  currentUserId,
+  postId,
+  onCommentUpdated,
+  onCommentDeleted,
+  isReply,
+}: CommentItemProps) {
   const [isEditing, setIsEditing] = React.useState(false);
   const [editContent, setEditContent] = React.useState(comment.content);
   const [isReplying, setIsReplying] = React.useState(false);
@@ -182,7 +189,8 @@ function CommentItem({ comment, currentUserId, postId, onCommentUpdated, onComme
               onClick={() => setShowReplies(!showReplies)}
               className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
             >
-              {showReplies ? '▼' : '▶'} {comment.replies.length} {comment.replies.length === 1 ? 'reply' : 'replies'}
+              {showReplies ? '▼' : '▶'} {comment.replies.length}{' '}
+              {comment.replies.length === 1 ? 'reply' : 'replies'}
             </button>
             {showReplies && (
               <div className="mt-2 space-y-3">
@@ -206,7 +214,12 @@ function CommentItem({ comment, currentUserId, postId, onCommentUpdated, onComme
   );
 }
 
-export function CommentSection({ postId, comments, currentUserId, onCommentAdded }: CommentSectionProps) {
+export function CommentSection({
+  postId,
+  comments,
+  currentUserId,
+  onCommentAdded,
+}: CommentSectionProps) {
   const [input, setInput] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const [commentsList, setCommentsList] = React.useState(comments);
@@ -229,55 +242,67 @@ export function CommentSection({ postId, comments, currentUserId, onCommentAdded
     }
   };
 
-  const removeCommentRecursively = React.useCallback((items: Comment[], targetId: string): Comment[] => {
-    return items
-      .filter((item) => item.id !== targetId)
-      .map((item) => ({
-        ...item,
-        replies: item.replies ? removeCommentRecursively(item.replies, targetId) : item.replies,
-      }));
-  }, []);
+  const removeCommentRecursively = React.useCallback(
+    (items: Comment[], targetId: string): Comment[] => {
+      return items
+        .filter((item) => item.id !== targetId)
+        .map((item) => ({
+          ...item,
+          replies: item.replies ? removeCommentRecursively(item.replies, targetId) : item.replies,
+        }));
+    },
+    []
+  );
 
-  const upsertCommentRecursively = React.useCallback((items: Comment[], updatedComment: Comment): Comment[] => {
-    const isReply = !!updatedComment.parentCommentId;
+  const upsertCommentRecursively = React.useCallback(
+    (items: Comment[], updatedComment: Comment): Comment[] => {
+      const isReply = !!updatedComment.parentCommentId;
 
-    if (isReply) {
-      return items.map((item) => {
-        if (item.id === updatedComment.parentCommentId) {
-          const currentReplies = item.replies ?? [];
-          const existingIndex = currentReplies.findIndex((reply) => reply.id === updatedComment.id);
+      if (isReply) {
+        return items.map((item) => {
+          if (item.id === updatedComment.parentCommentId) {
+            const currentReplies = item.replies ?? [];
+            const existingIndex = currentReplies.findIndex(
+              (reply) => reply.id === updatedComment.id
+            );
 
-          if (existingIndex >= 0) {
-            const nextReplies = [...currentReplies];
-            nextReplies[existingIndex] = { ...nextReplies[existingIndex], ...updatedComment };
-            return { ...item, replies: nextReplies };
+            if (existingIndex >= 0) {
+              const nextReplies = [...currentReplies];
+              nextReplies[existingIndex] = { ...nextReplies[existingIndex], ...updatedComment };
+              return { ...item, replies: nextReplies };
+            }
+
+            return { ...item, replies: [updatedComment, ...currentReplies] };
           }
 
-          return { ...item, replies: [updatedComment, ...currentReplies] };
+          return {
+            ...item,
+            replies: item.replies
+              ? upsertCommentRecursively(item.replies, updatedComment)
+              : item.replies,
+          };
+        });
+      }
+
+      let found = false;
+      const nextItems = items.map((item) => {
+        if (item.id === updatedComment.id) {
+          found = true;
+          return { ...item, ...updatedComment };
         }
 
         return {
           ...item,
-          replies: item.replies ? upsertCommentRecursively(item.replies, updatedComment) : item.replies,
+          replies: item.replies
+            ? upsertCommentRecursively(item.replies, updatedComment)
+            : item.replies,
         };
       });
-    }
 
-    let found = false;
-    const nextItems = items.map((item) => {
-      if (item.id === updatedComment.id) {
-        found = true;
-        return { ...item, ...updatedComment };
-      }
-
-      return {
-        ...item,
-        replies: item.replies ? upsertCommentRecursively(item.replies, updatedComment) : item.replies,
-      };
-    });
-
-    return found ? nextItems : [updatedComment, ...nextItems];
-  }, []);
+      return found ? nextItems : [updatedComment, ...nextItems];
+    },
+    []
+  );
 
   const handleCommentDeleted = (commentId: string) => {
     setCommentsList((prev) => removeCommentRecursively(prev, commentId));
@@ -289,7 +314,9 @@ export function CommentSection({ postId, comments, currentUserId, onCommentAdded
 
   return (
     <div className="mt-8">
-      <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Comments ({commentsList.length})</h3>
+      <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+        Comments ({commentsList.length})
+      </h3>
       {currentUserId && (
         <form onSubmit={handleSubmit} className="mb-6">
           <div className="relative">
@@ -312,11 +339,13 @@ export function CommentSection({ postId, comments, currentUserId, onCommentAdded
                   </p>
                 )}
               </div>
-              <span className={`text-xs ${
-                isCommentTooLong
-                  ? 'text-yellow-600 dark:text-yellow-400 font-medium'
-                  : 'text-gray-500 dark:text-gray-400'
-              }`}>
+              <span
+                className={`text-xs ${
+                  isCommentTooLong
+                    ? 'text-yellow-600 dark:text-yellow-400 font-medium'
+                    : 'text-gray-500 dark:text-gray-400'
+                }`}
+              >
                 {input.length}/{MAX_COMMENT_LENGTH}
               </span>
             </div>
@@ -332,7 +361,9 @@ export function CommentSection({ postId, comments, currentUserId, onCommentAdded
       )}
       <div className="space-y-4">
         {commentsList.length === 0 ? (
-          <p className="text-gray-500 dark:text-gray-400 text-center py-4">No comments yet. Be the first to comment!</p>
+          <p className="text-gray-500 dark:text-gray-400 text-center py-4">
+            No comments yet. Be the first to comment!
+          </p>
         ) : (
           commentsList.map((comment) => (
             <CommentItem

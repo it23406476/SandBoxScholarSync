@@ -239,7 +239,9 @@ export default function ArticleDetailPage() {
                     key={`${attachment.name}-${index}`}
                     className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-md bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700"
                   >
-                    <span className="text-sm text-gray-700 dark:text-gray-200 truncate">{attachment.name}</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-200 truncate">
+                      {attachment.name}
+                    </span>
                     <button
                       type="button"
                       onClick={() => handleAttachmentDownload(attachment)}
@@ -277,13 +279,15 @@ export default function ArticleDetailPage() {
             comments={post.comments || []}
             currentUserId={session?.user?.id}
             onCommentAdded={(comment) => {
-              setPost((prev: Post | null) => (
-                prev ? {
-                  ...prev,
-                  comments: [comment, ...(prev.comments || [])],
-                  commentCount: (prev.commentCount || 0) + 1,
-                } : null
-              ));
+              setPost((prev: Post | null) =>
+                prev
+                  ? {
+                      ...prev,
+                      comments: [comment, ...(prev.comments || [])],
+                      commentCount: (prev.commentCount || 0) + 1,
+                    }
+                  : null
+              );
             }}
           />
         </article>

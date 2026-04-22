@@ -123,7 +123,8 @@ async function main() {
   const post1 = await prisma.post.create({
     data: {
       title: 'React Best Practices for 2024',
-      content: 'I wanted to share some React best practices I learned recently. Using hooks properly, managing state efficiently, and avoiding unnecessary re-renders are key concepts that improved my performance significantly.',
+      content:
+        'I wanted to share some React best practices I learned recently. Using hooks properly, managing state efficiently, and avoiding unnecessary re-renders are key concepts that improved my performance significantly.',
       category: 'technology',
       imageUrl: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&h=400&fit=crop',
       authorId: student1.id,
@@ -134,7 +135,8 @@ async function main() {
   const post2 = await prisma.post.create({
     data: {
       title: 'Database Design Fundamentals',
-      content: 'Understanding normalization, relationships, and indexing is crucial for building scalable applications. In this article, I break down the fundamental concepts of relational database design with practical examples.',
+      content:
+        'Understanding normalization, relationships, and indexing is crucial for building scalable applications. In this article, I break down the fundamental concepts of relational database design with practical examples.',
       category: 'database',
       imageUrl: 'https://images.unsplash.com/photo-1516321318423-f06f70d504d0?w=600&h=400&fit=crop',
       authorId: lecturer.id,
@@ -145,7 +147,8 @@ async function main() {
   const post3 = await prisma.post.create({
     data: {
       title: 'Getting Started with TypeScript',
-      content: 'TypeScript has changed the way I write JavaScript. The type safety it provides catches bugs before they reach production. Here are some tips for beginners transitioning from JavaScript to TypeScript.',
+      content:
+        'TypeScript has changed the way I write JavaScript. The type safety it provides catches bugs before they reach production. Here are some tips for beginners transitioning from JavaScript to TypeScript.',
       category: 'programming',
       imageUrl: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&h=400&fit=crop',
       authorId: student2.id,
@@ -156,7 +159,8 @@ async function main() {
   const post4 = await prisma.post.create({
     data: {
       title: 'Cybersecurity in Modern Applications',
-      content: 'Security should not be an afterthought. From implementing OAuth to preventing SQL injection, here\'s a comprehensive guide to securing your web applications.',
+      content:
+        "Security should not be an afterthought. From implementing OAuth to preventing SQL injection, here's a comprehensive guide to securing your web applications.",
       category: 'security',
       imageUrl: 'https://images.unsplash.com/photo-1516321318423-f06f70d504d0?w=600&h=400&fit=crop',
       authorId: lecturer.id,
@@ -207,7 +211,7 @@ async function main() {
 
   const comment6 = await prisma.comment.create({
     data: {
-      content: 'TypeScript definitely has a learning curve, but it\'s worth the investment!',
+      content: "TypeScript definitely has a learning curve, but it's worth the investment!",
       authorId: lecturer.id,
       postId: post3.id,
     },

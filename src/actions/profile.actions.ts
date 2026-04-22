@@ -125,7 +125,9 @@ export async function getUserProfileData(): Promise<UserProfileData> {
   try {
     const parsedBadges = JSON.parse(user.badges || '[]') as unknown;
     badgeNames = Array.isArray(parsedBadges)
-      ? parsedBadges.filter((badge): badge is string => typeof badge === 'string' && badge.trim().length > 0)
+      ? parsedBadges.filter(
+          (badge): badge is string => typeof badge === 'string' && badge.trim().length > 0
+        )
       : [];
   } catch {
     badgeNames = [];

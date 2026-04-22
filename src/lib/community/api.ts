@@ -70,7 +70,9 @@ export const communityApi = {
   },
 
   async getNotifications(page: number = 1, limit: number = 20) {
-    const res = await fetch(`/api/notifications?page=${page}&limit=${limit}`, { cache: 'no-store' });
+    const res = await fetch(`/api/notifications?page=${page}&limit=${limit}`, {
+      cache: 'no-store',
+    });
     if (!res.ok) throw new Error('Failed to fetch notifications');
     return res.json();
   },

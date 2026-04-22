@@ -29,9 +29,9 @@ export async function POST(request: NextRequest) {
 
     const comment = await prisma.comment.create({
       data: { content, postId, authorId, parentCommentId },
-      include: { 
+      include: {
         author: { select: { id: true, name: true, email: true } },
-        post: { select: { id: true, authorId: true } }
+        post: { select: { id: true, authorId: true } },
       },
     });
 
@@ -54,11 +54,11 @@ export async function POST(request: NextRequest) {
 
     // Create notification for parent comment author if it's a reply
     if (parentCommentId) {
-      const parentComment = await prisma.comment.findUnique({ 
+      const parentComment = await prisma.comment.findUnique({
         where: { id: parentCommentId },
-        include: { author: { select: { id: true, name: true } } }
+        include: { author: { select: { id: true, name: true } } },
       });
-      
+
       if (parentComment && parentComment.authorId !== authorId) {
         await prisma.notification.create({
           data: {

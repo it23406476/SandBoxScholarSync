@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSessionUser } from '@/lib/auth';
 
-export async function POST(request: NextRequest, { params }: { params: Promise<{ postId: string }> }) {
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ postId: string }> }
+) {
   try {
     const sessionUser = await getServerSessionUser();
     if (!sessionUser) {
