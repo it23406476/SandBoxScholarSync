@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { getServerSessionUser } from '@/lib/auth';
 import { isNotificationRead, markNotificationsRead } from '@/lib/community/serverState';
 
@@ -14,7 +14,21 @@ export async function GET(request: NextRequest) {
     const limit = Number(request.nextUrl.searchParams.get('limit') || '20');
     const skip = Math.max(page - 1, 0) * limit;
 
-    const [comments, total] = await Promise.all([
+    // Get notifications from Notification model (new system)
+    const [dbNotifications, dbTotal] = await Promise.all([
+      prisma.notification.findMany({
+        where: { userId: sessionUser.id },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      prisma.notification.count({
+        where: { userId: sessionUser.id },
+      }),
+    ]);
+
+    // Also get legacy comment notifications
+    const [comments, commentTotal] = await Promise.all([
       prisma.comment.findMany({
         where: {
           post: {
@@ -25,8 +39,8 @@ export async function GET(request: NextRequest) {
           },
         },
         orderBy: { createdAt: 'desc' },
-        skip,
-        take: limit,
+        skip: 0,
+        take: 20,
         include: {
           author: { select: { id: true, name: true } },
           post: {
@@ -50,12 +64,12 @@ export async function GET(request: NextRequest) {
       }),
     ]);
 
-    const notifications = comments.map((comment) => {
+    const legacyNotifications = comments.map((comment) => {
       const id = `comment-${comment.id}`;
       return {
         id,
         type: 'POST_COMMENTED' as const,
-        message: `${comment.author.name} commented on your post \"${comment.post.title}\"`,
+        message: `${comment.author.name} commented on your post "${comment.post.title}"`,
         isRead: isNotificationRead(sessionUser.id, id),
         createdAt: comment.createdAt,
         post: comment.post,
@@ -67,11 +81,16 @@ export async function GET(request: NextRequest) {
       };
     });
 
+    // Combine both notification types
+    const allNotifications = [...dbNotifications, ...legacyNotifications].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+
     return NextResponse.json({
-      notifications,
-      total,
+      notifications: allNotifications.slice(0, limit),
+      total: dbTotal + commentTotal,
       page,
-      pages: Math.ceil(total / limit),
+      pages: Math.ceil((dbTotal + commentTotal) / limit),
     });
   } catch (error) {
     console.error('Error fetching notifications:', error);

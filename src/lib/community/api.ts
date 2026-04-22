@@ -44,13 +44,53 @@ export const communityApi = {
     return res.json();
   },
 
-  async createComment(content: string, postId: string, authorId: string) {
+  async createComment(content: string, postId: string, authorId: string, parentCommentId?: string) {
     const res = await fetch('/api/comments', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content, postId, authorId }),
+      body: JSON.stringify({ content, postId, authorId, parentCommentId }),
     });
     if (!res.ok) throw new Error('Failed to create comment');
+    return res.json();
+  },
+
+  async editComment(commentId: string, content: string) {
+    const res = await fetch(`/api/comments/${commentId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content }),
+    });
+    if (!res.ok) throw new Error('Failed to edit comment');
+    return res.json();
+  },
+
+  async deleteComment(commentId: string) {
+    const res = await fetch(`/api/comments/${commentId}`, {
+      method: 'DELETE',
+    });
+    if (!res.ok) throw new Error('Failed to delete comment');
+    return res.json();
+  },
+
+  async getNotifications(userId: string, limit: number = 10) {
+    const res = await fetch(`/api/notifications?userId=${userId}&limit=${limit}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Failed to fetch notifications');
+    return res.json();
+  },
+
+  async markNotificationAsRead(notificationId: string) {
+    const res = await fetch(`/api/notifications/${notificationId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ isRead: true }),
+    });
+    if (!res.ok) throw new Error('Failed to mark notification as read');
+    return res.json();
+  },
+
+  async getUnreadNotificationCount(userId: string) {
+    const res = await fetch(`/api/notifications/unread?userId=${userId}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Failed to fetch unread count');
     return res.json();
   },
 };

@@ -32,6 +32,7 @@ model User {
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
   likes     Like[]            @relation("UserLikes")
+  notifications Notification[] @relation("Notifications")
 }
 
 model Account {
@@ -149,16 +150,23 @@ model Post {
 model Comment {
   id        String   @id @default(cuid())
   content   String
+  isEdited  Boolean  @default(false)
 
   authorId  String
   author    User     @relation("UserComments", fields: [authorId], references: [id])
   postId    String
   post      Post     @relation("PostComments", fields: [postId], references: [id])
+  
+  parentCommentId String?
+  parentComment   Comment? @relation("CommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
+  replies         Comment[] @relation("CommentReplies")
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([authorId])
   @@index([postId])
+  @@index([parentCommentId])
 }
 
 model Like {
@@ -173,4 +181,25 @@ model Like {
   @@unique([userId, postId])
   @@index([userId])
   @@index([postId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  type      String // 'comment', 'reply', 'like', 'post'
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  
+  userId    String
+  user      User     @relation("Notifications", fields: [userId], references: [id], onDelete: Cascade)
+  postId    String?
+  commentId String?
+  triggeredByUserId String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
 }
