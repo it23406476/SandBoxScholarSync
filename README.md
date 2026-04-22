@@ -140,3 +140,4 @@ Notes:
 
 - Yes, if `NEXTAUTH_URL` is wrong or missing in production, login callbacks can fail.
 - Set the same variables in your CI/CD provider secrets (GitHub Actions) so build/deploy pipelines are consistent.
+- Do not use SQLite (`file:...`) for production on Vercel if you need signup/write operations. Use a managed Postgres database and run Prisma migrations against it.

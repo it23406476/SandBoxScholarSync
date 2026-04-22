@@ -1,7 +1,7 @@
 'use server';
 
 import bcrypt from 'bcryptjs';
-import { Role } from '@prisma/client';
+import { Prisma, Role } from '@prisma/client';
 import prisma from '@/lib/prisma';
 
 type RegisterInput = {
@@ -25,9 +25,20 @@ export async function registerUser(input: RegisterInput) {
   try {
     const email = input.email.toLowerCase().trim();
     const name = input.name.trim();
+    const databaseUrl = process.env.DATABASE_URL ?? '';
+    const isFileDatabase = databaseUrl.startsWith('file:');
 
     if (!name || !email || !input.password) {
       return { success: false, message: 'All fields are required.' };
+    }
+
+    // Vercel serverless functions cannot reliably persist SQLite file writes.
+    if (process.env.VERCEL && isFileDatabase) {
+      return {
+        success: false,
+        message:
+          'Signup is unavailable: production database is not configured for writes. Set DATABASE_URL to a managed PostgreSQL database on Vercel.',
+      };
     }
 
     const existing = await prisma.user.findUnique({ where: { email } });
@@ -49,6 +60,19 @@ export async function registerUser(input: RegisterInput) {
     return { success: true };
   } catch (error) {
     console.error('registerUser failed:', error);
+
+    if (error instanceof Prisma.PrismaClientInitializationError) {
+      return {
+        success: false,
+        message:
+          'Database connection failed. Check your production DATABASE_URL and run migrations.',
+      };
+    }
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      return { success: false, message: 'An account with this email already exists.' };
+    }
+
     return { success: false, message: 'Unable to create account right now.' };
   }
 }
