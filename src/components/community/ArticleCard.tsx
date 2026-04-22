@@ -2,10 +2,15 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Heart, MessageCircle } from 'lucide-react';
+import { Heart, MessageCircle, FileText, Download } from 'lucide-react';
 import { formatDate, truncateContent } from '@/lib/community/helpers';
 import { useCommunityStore } from '@/lib/community/communityStore';
 import { communityApi } from '@/lib/community/api';
+
+type PostAttachment = {
+  name: string;
+  data: string;
+};
 
 interface ArticleCardProps {
   post: {
@@ -17,6 +22,7 @@ interface ArticleCardProps {
     commentCount: number;
     createdAt: Date;
     author: { id: string; name: string };
+    attachments?: PostAttachment[];
   };
   currentUserId?: string;
 }
@@ -78,6 +84,31 @@ export function ArticleCard({ post, currentUserId }: ArticleCardProps) {
           <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 mb-4 grow">
             {truncateContent(post.content, 120)}
           </p>
+
+          {/* PDF Attachment indicator */}
+          {post.attachments && post.attachments.length > 0 && (
+            <div className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 mb-2">
+              <FileText size={12} />
+              <span>{post.attachments.length} PDF attachment{post.attachments.length > 1 ? 's' : ''}</span>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const attachment = post.attachments![0];
+                  const link = document.createElement('a');
+                  link.href = attachment.data;
+                  link.download = attachment.name.endsWith('.pdf') ? attachment.name : `${attachment.name}.pdf`;
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }}
+                className="ml-auto flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
+              >
+                <Download size={10} />
+                PDF
+              </button>
+            </div>
+          )}
 
           {/* Footer with Actions */}
           <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-slate-700 mt-auto">

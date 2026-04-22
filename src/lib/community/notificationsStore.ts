@@ -3,7 +3,7 @@ import { communityApi } from './api';
 
 interface Notification {
   id: string;
-  type: 'POST_LIKED' | 'POST_COMMENTED' | 'COMMENT_LIKED';
+  type: 'POST_LIKED' | 'POST_COMMENTED' | 'COMMENT_LIKED' | 'like' | 'comment' | 'reply';
   message: string;
   isRead: boolean;
   createdAt: string;

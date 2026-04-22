@@ -1,5 +1,10 @@
 import { create } from 'zustand';
 
+export type PostAttachment = {
+  name: string;
+  data: string;
+};
+
 export type Post = {
   id: string;
   title: string;
@@ -14,6 +19,7 @@ export type Post = {
     name: string;
     email: string;
   };
+  attachments?: PostAttachment[];
 };
 
 interface CommunityStore {

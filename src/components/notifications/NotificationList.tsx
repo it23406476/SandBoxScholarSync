@@ -9,7 +9,7 @@ import { formatDate } from '@/lib/community/helpers';
 interface NotificationItemProps {
   notification: {
     id: string;
-    type: 'POST_LIKED' | 'POST_COMMENTED' | 'COMMENT_LIKED';
+    type: 'POST_LIKED' | 'POST_COMMENTED' | 'COMMENT_LIKED' | 'like' | 'comment' | 'reply';
     message: string;
     isRead: boolean;
     createdAt: string;
@@ -35,9 +35,13 @@ function NotificationItem({ notification, onClick }: NotificationItemProps) {
   const getIcon = () => {
     switch (notification.type) {
       case 'POST_LIKED':
+      case 'like':
         return <Heart size={16} className="text-red-500" />;
       case 'POST_COMMENTED':
+      case 'comment':
         return <MessageCircle size={16} className="text-blue-500" />;
+      case 'reply':
+        return <MessageCircle size={16} className="text-green-500" />;
       default:
         return <Clock size={16} className="text-gray-500" />;
     }
