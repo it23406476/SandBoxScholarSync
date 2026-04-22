@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import { NavLink } from '../NavLink';
 import { signOut, useSession } from 'next-auth/react';
-import { NotificationBell } from '../notifications/NotificationBell';
 
 // Using a simple type for now to avoid mock-data errors
 type UserRole = 'student' | 'lecturer';
@@ -64,9 +63,6 @@ export function DesktopSidebar({ role }: DesktopSidebarProps) {
         </h1>
         <p className="text-xs text-muted-foreground mt-1 capitalize">{role} Portal</p>
         <p className="text-xs text-muted-foreground mt-1 truncate">{session?.user?.name}</p>
-        <div className="mt-2">
-          <NotificationBell />
-        </div>
       </div>
 
       <nav className="flex-1 p-4 space-y-1">

@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react';
 import { CommunityTimeline } from '@/components/community/CommunityTimeline';
 import { SearchBar } from '@/components/community/SearchBar';
 import { FilterBar } from '@/components/community/Filterbar';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 
 export default function CommunityPage() {
   const { data: session } = useSession();
@@ -21,13 +22,16 @@ export default function CommunityPage() {
               Share knowledge and learn from your peers
             </p>
           </div>
-          <Link
-            href="/community/write"
-            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <Plus size={20} />
-            Write Article
-          </Link>
+          <div className="flex items-center gap-3">
+            <NotificationBell />
+            <Link
+              href="/community/write"
+              className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <Plus size={20} />
+              Write Article
+            </Link>
+          </div>
         </div>
         <div className="mb-8 space-y-4">
           <SearchBar />

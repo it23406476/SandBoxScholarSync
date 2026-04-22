@@ -505,6 +505,205 @@ We look forward to seeing you at Tech Fest 2024. Let us build the future togethe
     },
   });
 
+  const post7 = await prisma.post.create({
+    data: {
+      title: 'Effective Study Techniques: How to Retain More and Study Less',
+      content: `Many students spend long hours studying yet feel like they retain very little. The problem is rarely a lack of effort — it is a lack of effective technique. Cognitive science has given us powerful insights into how memory works, and applying these insights can dramatically improve your learning efficiency. In this article, I will cover the evidence-based study techniques that top students use to retain more information in less time.
+
+## The Problem with Passive Studying
+
+Passive studying includes re-reading notes, highlighting text, and watching lecture recordings at 2x speed. These methods feel productive because they are familiar and comfortable. However, research consistently shows that passive review produces very shallow learning. The information enters your short-term memory but is quickly forgotten because your brain never had to work hard to retrieve it.
+
+The key insight from cognitive science is that **struggle is necessary for learning**. When your brain has to work to recall or apply information, it strengthens the neural pathways associated with that knowledge. Easy studying does not produce lasting learning.
+
+## Active Recall: The Most Powerful Technique
+
+Active recall, also called retrieval practice, is the process of actively trying to remember information without looking at your notes. Instead of re-reading a chapter, you close the book and write down everything you can remember. Instead of reviewing flashcards passively, you cover the answer and force yourself to retrieve it.
+
+The testing effect, one of the most replicated findings in educational psychology, shows that retrieving information from memory is far more effective for long-term retention than re-reading the same material. A single test session produces better retention than three additional study sessions of passive review.
+
+To apply active recall, try the blank page method: after studying a topic, take a blank sheet of paper and write everything you can recall from memory. Then check your notes to see what you missed. Focus your next study session on the gaps, and repeat the process.
+
+## Spaced Repetition: Fighting the Forgetting Curve
+
+Hermann Ebbinghaus discovered that we forget information at a predictable rate — roughly half of newly learned information is forgotten within a day, and most of the rest within a week. However, each time you successfully recall information, the forgetting rate slows down significantly.
+
+Spaced repetition exploits this phenomenon by scheduling reviews at increasing intervals. Instead of cramming all your review into a single session, you space it out over days and weeks. The first review might happen the day after initial learning, the second review three days later, the third review a week after that, and so on.
+
+Apps like Anki and RemNote implement spaced repetition algorithms that automatically schedule your reviews at optimal intervals. If you consistently use a spaced repetition system for your course material, you can maintain high retention rates with just 20 to 30 minutes of daily review.
+
+## The Pomodoro Technique for Focus
+
+The Pomodoro Technique breaks your study time into focused 25-minute blocks separated by 5-minute breaks. After four Pomodoros, you take a longer break of 15 to 30 minutes. This approach works because it makes large tasks feel manageable, prevents mental fatigue, and creates a sense of urgency that reduces procrastination.
+
+During each Pomodoro, commit to working on a single task with no distractions. Put your phone in another room, close social media tabs, and use a site blocker if necessary. The break is equally important — use it to genuinely rest, not to check your phone.
+
+## Interleaving: Mixing Topics for Better Learning
+
+Blocked practice involves studying one topic intensively before moving to the next. Interleaved practice involves mixing multiple topics within a single study session. Although blocked practice feels more productive because you build momentum on a single topic, research shows that interleaved practice produces significantly better long-term retention and transfer.
+
+For example, instead of spending two hours on calculus and then two hours on statistics, alternate between problems from different topics every 20 to 30 minutes. This forces your brain to distinguish between different concepts and retrieval cues, which builds more flexible and durable knowledge.
+
+## Elaborative Interrogation and Self-Explanation
+
+Elaborative interrogation involves asking yourself "why" and "how" questions as you study. Instead of simply accepting a fact, ask why it is true and how it connects to what you already know. This encourages deeper processing and creates more meaningful connections in your memory.
+
+Self-explanation is similar: as you work through a problem or read a passage, explain the reasoning to yourself in your own words. If you cannot explain it clearly, it is a signal that your understanding has gaps that need to be addressed.
+
+## Conclusion
+
+Effective studying is about working smarter, not harder. Replace passive review with active recall, space your repetitions to fight forgetting, use the Pomodoro Technique to maintain focus, and mix topics to build flexible understanding. These techniques require more mental effort than passive re-reading, but that effort is precisely what makes them work.`,
+      category: 'study',
+      imageUrl: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=600&h=400&fit=crop',
+      authorId: student2.id,
+      attachments: JSON.stringify([]),
+    },
+  });
+
+  const post8 = await prisma.post.create({
+    data: {
+      title: 'From Idea to Deployment: How We Built Our Final Year Project in 12 Weeks',
+      content: `Our final year project began as a vague idea — something about helping students find study partners — and ended 12 weeks later as a fully deployed web application with 200 registered users. The journey was challenging, rewarding, and full of lessons that no textbook could have taught us. In this article, I want to share the exact process we followed, the mistakes we made, and the decisions that made the difference between a project that shipped and one that did not.
+
+## Week 1-2: Defining the Problem
+
+The biggest mistake most student projects make is starting to code before the problem is clearly defined. We spent the first two weeks not writing a single line of code. Instead, we interviewed 20 students about their study habits, pain points, and how they currently find study partners.
+
+The insights were surprising. Students did not primarily want a matching algorithm — they wanted a way to find people studying the same specific topic at the same time, not just the same module. This led us to design around real-time availability and topic tagging rather than the profile-based matching we had originally envisioned.
+
+We wrote a one-page problem statement, defined our target user persona, and agreed on three core features that we would build no matter what: a real-time availability indicator, a topic-based search, and a simple messaging system. Everything else was a nice-to-have.
+
+## Week 3-4: Technology Stack and Architecture
+
+With a clear problem definition, we chose our technology stack based on three criteria: familiarity, ecosystem maturity, and deployment simplicity. We settled on Next.js for the full stack framework, PostgreSQL with Prisma for the database, and Vercel for deployment.
+
+The most important architectural decision was to use WebSockets for real-time presence. We evaluated both Socket.IO and Pusher. We chose Pusher because it handled the infrastructure complexity for us, leaving us free to focus on the application logic. In retrospect, this was the right call — the weeks we saved on infrastructure allowed us to polish the user experience instead.
+
+We drew the database schema on a whiteboard, reviewed it as a team, and only then created the Prisma schema file. This upfront design work saved us from three schema migrations that would have been needed otherwise.
+
+## Week 5-8: Core Development Sprint
+
+With the architecture decided, we divided the work into vertical slices — each feature was built end-to-end by one developer. This meant each person owned the database model, API route, and UI for their assigned feature. We avoided the common trap of splitting work horizontally (one person does all the backend, another all the frontend), which creates bottlenecks and integration headaches.
+
+We used GitHub Projects to track tasks and held daily 15-minute standups to surface blockers early. The rule was simple: if you are blocked for more than two hours, you raise it in the standup. This prevented the silent blocking that derails so many projects.
+
+The biggest technical challenge was implementing the real-time availability feature. Users needed to appear offline immediately when they closed their browser, even without a logout action. We solved this with a combination of browser unload events and a server-side heartbeat timeout — if the server did not receive a heartbeat within 30 seconds, it marked the user as offline.
+
+## Week 9-10: Testing and Bug Fixing
+
+We set aside two full weeks for testing, which felt excessive at the time but proved essential. We wrote end-to-end tests using Playwright for the three critical user flows: registering and setting up a profile, searching for study partners, and sending a message. These tests caught two critical bugs that manual testing had missed.
+
+User testing with five real students revealed three usability issues that our team had been blind to because we knew the system too well. The onboarding flow was confusing, the search results were not sorted intuitively, and the messaging interface did not make it clear when a message had been sent. All three were fixed within a day once identified.
+
+## Week 11-12: Deployment and Polish
+
+Deploying to Vercel was straightforward with Next.js, but we underestimated the work required to configure the production environment. Environment variables, email configuration, and database connection pooling each required careful attention.
+
+We used Neon for our PostgreSQL database because it provided a generous free tier and automatic connection pooling through PgBouncer, which is essential for serverless deployments where each request may open a new database connection.
+
+## Key Lessons
+
+Building something real in a constrained time frame teaches lessons that lectures cannot. Define the problem before writing code. Choose simplicity over cleverness in your technology decisions. Build vertically, not horizontally. Surface blockers early. Test with real users. And most importantly — ship something, even if it is not perfect.
+
+The version we deployed at week 12 was not the system we imagined at week one. It was better, because it was shaped by real user feedback and hard-won technical decisions.`,
+      category: 'projects',
+      imageUrl: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=600&h=400&fit=crop',
+      authorId: student1.id,
+      attachments: JSON.stringify([]),
+    },
+  });
+
+  const post9 = await prisma.post.create({
+    data: {
+      title: 'Important: Updated Submission Guidelines for SE3040 Assignment 2',
+      content: `Dear students, please read this announcement carefully as it contains important updates to the submission requirements for Assignment 2 of SE3040 Applied Software Engineering. Several students have asked questions about the submission format and grading criteria, and I want to address all of them in one place to ensure everyone has the same information.
+
+## Deadline Extension
+
+Following the feedback received during last week's Q&A session, the submission deadline for Assignment 2 has been extended by five days. The new deadline is Friday, May 3rd at 11:59 PM. This extension is final and no further extensions will be granted, as the marking process must begin the following Monday.
+
+Please do not wait until the last day to submit. The submission portal has strict time limits and does not account for network issues or last-minute technical difficulties on your end. Submit at least 24 hours before the deadline to be safe.
+
+## Updated Submission Format
+
+The submission format has been updated based on feedback that the original instructions were unclear. You must now submit a single ZIP file containing:
+
+1. A PDF report following the provided template (maximum 15 pages, excluding appendices)
+2. The complete source code in a folder named exactly \`src\`
+3. A \`README.md\` file with clear setup and running instructions
+4. A folder named \`screenshots\` containing at least five screenshots of your running application
+
+The ZIP file must be named using the format \`StudentID_Assignment2.zip\`. Files that do not follow this naming convention will not be accepted by the automated grading system.
+
+## Grading Criteria Update
+
+The grading rubric has been updated to place more emphasis on code quality and documentation. The updated weightings are as follows: functionality (35%), code quality and design patterns (25%), documentation and report (25%), and testing evidence (15%).
+
+The testing evidence requirement is new. You must include a section in your report describing the tests you performed, with screenshots or test output as evidence. Manual testing is acceptable, but automated tests (unit tests or integration tests) will be awarded bonus marks of up to 5%.
+
+## Plagiarism Policy Reminder
+
+I want to remind all students that plagiarism detection software will be run on all submissions. Using code from online sources is acceptable provided it is properly cited and constitutes no more than 20% of your total codebase. Code sharing between students is not permitted under any circumstances. Each student's submission must represent their own independent work.
+
+If you are struggling with the assignment, please attend office hours or post in the Q&A forum. I am happy to provide guidance without doing the work for you.
+
+## Frequently Asked Questions
+
+**Can I use frameworks not covered in lectures?** Yes, you may use any framework or library as long as you can demonstrate understanding of it during the viva.
+
+**Is a live deployment required?** A live deployment is not required but is strongly encouraged as it demonstrates additional technical capability and will be considered in the bonus marking.
+
+**Can I work on this in pairs?** Assignment 2 is an individual assessment. Pair submissions will receive zero marks for both students.
+
+If you have questions not addressed here, post them in the Q&A forum and I will respond within 24 hours on weekdays. Good luck with your submissions.`,
+      category: 'announcements',
+      imageUrl: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&h=400&fit=crop',
+      authorId: lecturer.id,
+      attachments: JSON.stringify([]),
+    },
+  });
+
+  const post10 = await prisma.post.create({
+    data: {
+      title: 'SLIIT AI & Data Science Society: Monthly Meetup Recap — April 2024',
+      content: `Last Saturday's monthly meetup of the SLIIT AI and Data Science Society was our most well-attended session yet, with over 80 students and faculty members joining us in the Innovation Lab. For those who could not attend, here is a detailed recap of everything that was covered, along with links to resources shared by the presenters.
+
+## Opening Keynote: The State of AI in Sri Lanka
+
+The session opened with a keynote by Dr. Priya Ratnasingham from the Department of Information Technology, who gave an insightful overview of the current state of artificial intelligence adoption in Sri Lanka. She highlighted that while global AI investment grew by 60% last year, Sri Lanka's tech sector is still in the early stages of integrating AI into production systems.
+
+Dr. Ratnasingham identified the three biggest barriers to AI adoption locally: the shortage of data engineering talent, the lack of high-quality labeled datasets in Sinhala and Tamil, and the absence of clear regulatory frameworks for AI-driven decisions in sensitive domains like healthcare and finance. She concluded with an optimistic note, pointing to several startups that are building AI-powered products specifically for the South Asian market.
+
+## Technical Talk: Building Your First NLP Pipeline
+
+The main technical session was delivered by Ashan Wickramasinghe, a final year Computer Science student who built an NLP pipeline for analyzing student feedback as his undergraduate research project. His presentation was one of the most practical and accessible talks we have had at a meetup.
+
+Ashan walked through the complete pipeline from raw text collection to model deployment using Python, Hugging Face Transformers, and FastAPI. He covered tokenization, fine-tuning a pre-trained BERT model on a custom dataset, evaluating model performance with precision and recall metrics, and deploying the model as a REST API on a free-tier cloud instance.
+
+Several attendees asked about the compute requirements for training and fine-tuning. Ashan explained that fine-tuning a BERT model on a small dataset (around 10,000 examples) requires roughly 4 to 8 hours on a free Google Colab GPU, which is entirely feasible for a student project. The slides and code repository from his presentation have been shared in our Discord server.
+
+## Workshop: Exploratory Data Analysis with Pandas and Seaborn
+
+The afternoon workshop was led by committee member Dilini Fernando, who guided participants through a hands-on EDA exercise using a real dataset of student academic performance. Participants used Jupyter notebooks to load, clean, and visualize the data, identifying patterns and anomalies that might not be obvious from summary statistics alone.
+
+Key techniques covered included handling missing values with imputation strategies, detecting and treating outliers, creating correlation heatmaps, and building distribution plots to understand feature distributions before modeling. The workshop emphasized that EDA is not a box to check before modeling — it is an ongoing dialogue with your data that continues throughout a project.
+
+The notebook from the workshop is available on our GitHub repository. You are encouraged to extend it with your own analysis and share your findings in our Discord channel.
+
+## Upcoming Events
+
+Our next meetup will focus on computer vision with a hands-on session on object detection using YOLOv8. We will also be hosting a Kaggle competition study group starting in two weeks, where teams will work on a machine learning competition together with mentorship from experienced members.
+
+The society is also organizing a data hackathon in collaboration with a local fintech company in June. Details will be announced on our Instagram page and in the Discord server. Teams of two to four members will compete to build the best predictive model on a real financial dataset, with prizes including cloud credits, books, and internship interview opportunities.
+
+To join the society or stay updated on events, follow us on Instagram at @sliit_ai_ds or join our Discord server using the link pinned in the community channel. We welcome students from all departments and all levels of experience.`,
+      category: 'events',
+      imageUrl: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&h=400&fit=crop',
+      authorId: student2.id,
+      attachments: JSON.stringify([]),
+    },
+  });
+
   // 7. Create Comments on Posts
   const comment1 = await prisma.comment.create({
     data: {
@@ -748,6 +947,10 @@ We look forward to seeing you at Tech Fest 2024. Let us build the future togethe
   await prisma.post.update({ where: { id: post4.id }, data: { likeCount: 1, commentCount: 1 } });
   await prisma.post.update({ where: { id: post5.id }, data: { likeCount: 3, commentCount: 1 } });
   await prisma.post.update({ where: { id: post6.id }, data: { likeCount: 2, commentCount: 2 } });
+  await prisma.post.update({ where: { id: post7.id }, data: { likeCount: 0, commentCount: 0 } });
+  await prisma.post.update({ where: { id: post8.id }, data: { likeCount: 0, commentCount: 0 } });
+  await prisma.post.update({ where: { id: post9.id }, data: { likeCount: 0, commentCount: 0 } });
+  await prisma.post.update({ where: { id: post10.id }, data: { likeCount: 0, commentCount: 0 } });
 
   console.log('✅ Database seeded successfully with expanded test data!');
 }

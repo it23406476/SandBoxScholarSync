@@ -6,7 +6,6 @@ import { signOut, useSession } from 'next-auth/react';
 import { BottomNav } from './BottomNav';
 import { CollapsibleSidebar } from './CollapsibleSidebar';
 import { DesktopSidebar } from './DesktopSidebar';
-import { NotificationBell } from '../notifications/NotificationBell';
 import { Menu } from 'lucide-react';
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
@@ -45,7 +44,6 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <NotificationBell />
             <p className="text-xs text-muted-foreground truncate max-w-[130px]">
               {session?.user?.name}
             </p>
