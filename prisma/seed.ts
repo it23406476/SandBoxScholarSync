@@ -1,9 +1,11 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('Seeding database... 🌱');
+  const seededPassword = await bcrypt.hash('Password123!', 10);
 
   // 1. Create Academic Modules
   const itpm = await prisma.module.upsert({
@@ -21,11 +23,14 @@ async function main() {
   // 2. Create Test Students
   const student1 = await prisma.user.upsert({
     where: { email: 'sams@student.sliit.lk' },
-    update: {},
+    update: {
+      password: seededPassword,
+    },
     create: {
       name: 'Sams Senarath',
       email: 'sams@student.sliit.lk',
       role: 'STUDENT',
+      password: seededPassword,
       points: 500,
       badges: JSON.stringify(['Beta Tester']),
     },
@@ -33,11 +38,14 @@ async function main() {
 
   const student2 = await prisma.user.upsert({
     where: { email: 'kamal@student.sliit.lk' },
-    update: {},
+    update: {
+      password: seededPassword,
+    },
     create: {
       name: 'Kamal Perera',
       email: 'kamal@student.sliit.lk',
       role: 'STUDENT',
+      password: seededPassword,
       points: 200,
     },
   });
@@ -45,11 +53,14 @@ async function main() {
   // 3. Create Test Lecturer
   const lecturer = await prisma.user.upsert({
     where: { email: 'sarah@lecturer.sliit.lk' },
-    update: {},
+    update: {
+      password: seededPassword,
+    },
     create: {
       name: 'Dr. Sarah',
       email: 'sarah@lecturer.sliit.lk',
       role: 'LECTURER',
+      password: seededPassword,
       points: 1000,
       badges: JSON.stringify(['Verified Educator']),
     },
