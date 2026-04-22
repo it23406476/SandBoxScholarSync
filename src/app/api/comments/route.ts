@@ -1,12 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getServerSessionUser } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
-    const { content, postId, authorId, parentCommentId } = await request.json();
+    const sessionUser = await getServerSessionUser();
+    if (!sessionUser) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { content, postId, parentCommentId } = await request.json();
+    const authorId = sessionUser.id;
 
     if (!content || !postId || !authorId) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    if (parentCommentId) {
+      const parentComment = await prisma.comment.findUnique({
+        where: { id: parentCommentId },
+        select: { id: true, postId: true },
+      });
+
+      if (!parentComment || parentComment.postId !== postId) {
+        return NextResponse.json({ error: 'Invalid parent comment' }, { status: 400 });
+      }
     }
 
     const comment = await prisma.comment.create({

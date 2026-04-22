@@ -121,7 +121,17 @@ export async function getUserProfileData(): Promise<UserProfileData> {
     })
   );
 
-  const storedBadges: ProfileBadge[] = user.badges.map((badge, index) => {
+  let badgeNames: string[] = [];
+  try {
+    const parsedBadges = JSON.parse(user.badges || '[]') as unknown;
+    badgeNames = Array.isArray(parsedBadges)
+      ? parsedBadges.filter((badge): badge is string => typeof badge === 'string' && badge.trim().length > 0)
+      : [];
+  } catch {
+    badgeNames = [];
+  }
+
+  const storedBadges: ProfileBadge[] = badgeNames.map((badge, index) => {
     const normalized = badge.toLowerCase();
     return {
       id: `stored-${index}`,

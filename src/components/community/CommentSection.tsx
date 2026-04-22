@@ -9,8 +9,8 @@ interface Comment {
   id: string;
   content: string;
   author: { id: string; name: string };
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: Date | string;
+  updatedAt: Date | string;
   isEdited?: boolean;
   parentCommentId?: string;
   replies?: Comment[];
@@ -65,7 +65,7 @@ function CommentItem({ comment, currentUserId, postId, onCommentUpdated, onComme
   const handleReply = async () => {
     if (!replyContent.trim() || !currentUserId) return;
     try {
-      const reply = await communityApi.createComment(replyContent, postId, currentUserId, comment.id);
+      const reply = await communityApi.createComment(replyContent, postId, comment.id);
       setReplyContent('');
       setIsReplying(false);
       onCommentUpdated?.(reply);
@@ -110,6 +110,8 @@ function CommentItem({ comment, currentUserId, postId, onCommentUpdated, onComme
             <textarea
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
+              aria-label="Edit comment"
+              placeholder="Edit your comment"
               className="w-full px-3 py-2 rounded bg-white dark:bg-slate-600 border border-gray-300 dark:border-slate-500 text-gray-900 dark:text-white resize-none"
               rows={3}
             />
@@ -216,7 +218,7 @@ export function CommentSection({ postId, comments, currentUserId, onCommentAdded
     if (!input.trim() || !currentUserId) return;
     setLoading(true);
     try {
-      const comment = await communityApi.createComment(input, postId, currentUserId);
+      const comment = await communityApi.createComment(input, postId);
       setInput('');
       setCommentsList([...commentsList, comment]);
       onCommentAdded?.(comment);
@@ -227,12 +229,62 @@ export function CommentSection({ postId, comments, currentUserId, onCommentAdded
     }
   };
 
+  const removeCommentRecursively = React.useCallback((items: Comment[], targetId: string): Comment[] => {
+    return items
+      .filter((item) => item.id !== targetId)
+      .map((item) => ({
+        ...item,
+        replies: item.replies ? removeCommentRecursively(item.replies, targetId) : item.replies,
+      }));
+  }, []);
+
+  const upsertCommentRecursively = React.useCallback((items: Comment[], updatedComment: Comment): Comment[] => {
+    const isReply = !!updatedComment.parentCommentId;
+
+    if (isReply) {
+      return items.map((item) => {
+        if (item.id === updatedComment.parentCommentId) {
+          const currentReplies = item.replies ?? [];
+          const existingIndex = currentReplies.findIndex((reply) => reply.id === updatedComment.id);
+
+          if (existingIndex >= 0) {
+            const nextReplies = [...currentReplies];
+            nextReplies[existingIndex] = { ...nextReplies[existingIndex], ...updatedComment };
+            return { ...item, replies: nextReplies };
+          }
+
+          return { ...item, replies: [updatedComment, ...currentReplies] };
+        }
+
+        return {
+          ...item,
+          replies: item.replies ? upsertCommentRecursively(item.replies, updatedComment) : item.replies,
+        };
+      });
+    }
+
+    let found = false;
+    const nextItems = items.map((item) => {
+      if (item.id === updatedComment.id) {
+        found = true;
+        return { ...item, ...updatedComment };
+      }
+
+      return {
+        ...item,
+        replies: item.replies ? upsertCommentRecursively(item.replies, updatedComment) : item.replies,
+      };
+    });
+
+    return found ? nextItems : [updatedComment, ...nextItems];
+  }, []);
+
   const handleCommentDeleted = (commentId: string) => {
-    setCommentsList(commentsList.filter(c => c.id !== commentId));
+    setCommentsList((prev) => removeCommentRecursively(prev, commentId));
   };
 
   const handleCommentUpdated = (updatedComment: Comment) => {
-    setCommentsList(commentsList.map(c => c.id === updatedComment.id ? updatedComment : c));
+    setCommentsList((prev) => upsertCommentRecursively(prev, updatedComment));
   };
 
   return (

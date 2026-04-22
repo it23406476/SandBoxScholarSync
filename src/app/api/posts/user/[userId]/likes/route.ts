@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSessionUser } from '@/lib/auth';
-import { getUserLikedPostIds } from '@/lib/community/serverState';
+import { prisma } from '@/lib/prisma';
 
 export async function GET(
   _request: NextRequest,
@@ -14,11 +14,17 @@ export async function GET(
 
     const { userId } = await params;
 
-    if (userId !== sessionUser.id) {
+    if (userId !== 'me' && userId !== sessionUser.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    const likedPostIds = getUserLikedPostIds(userId);
+    const targetUserId = userId === 'me' ? sessionUser.id : userId;
+    const likedPosts = await prisma.like.findMany({
+      where: { userId: targetUserId },
+      select: { postId: true },
+    });
+
+    const likedPostIds = likedPosts.map((item) => item.postId);
     return NextResponse.json({ likedPostIds });
   } catch (error) {
     console.error('Error fetching user likes:', error);

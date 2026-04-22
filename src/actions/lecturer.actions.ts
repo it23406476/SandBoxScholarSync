@@ -578,7 +578,7 @@ export async function updateModuleAction(
         moduleId: input.moduleId,
       },
     },
-    select: { id: true },
+    select: { moduleId: true },
   });
 
   if (!hasAssignment) {
@@ -635,7 +635,7 @@ export async function deleteModuleAction(
         moduleId,
       },
     },
-    select: { id: true },
+    select: { moduleId: true },
   });
 
   if (!hasAssignment) {
@@ -681,7 +681,7 @@ async function canLecturerManageQuestion(lecturerId: string, questionId: string)
         select: {
           lecturerAssignments: {
             where: { lecturerId },
-            select: { id: true },
+            select: { moduleId: true },
             take: 1,
           },
         },
@@ -830,7 +830,7 @@ export async function updateQuestionModuleAction(input: {
         select: {
           lecturerAssignments: {
             where: { lecturerId: lecturer.id },
-            select: { id: true },
+            select: { moduleId: true },
             take: 1,
           },
         },
@@ -853,7 +853,7 @@ export async function updateQuestionModuleAction(input: {
         moduleId: input.moduleId,
       },
     },
-    select: { id: true },
+    select: { moduleId: true },
   });
 
   if (!targetModuleAssignment) {

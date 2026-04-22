@@ -164,7 +164,7 @@ export async function createQuestion(data: {
       data: {
         title: data.title,
         content: data.content,
-        tags: data.tags,
+        tags: JSON.stringify(data.tags ?? []),
         bounty: data.bounty,
         moduleId: moduleRecord.id, // Use the real DB ID
         authorId: session.user.id,
@@ -201,7 +201,7 @@ export async function updateQuestion(data: {
       data: {
         title: data.title,
         content: data.content,
-        tags: data.tags,
+        tags: JSON.stringify(data.tags ?? []),
         bounty: data.bounty,
       },
     });

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
+import { getServerSessionUser } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
@@ -24,12 +26,9 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    interface OrderBy {
-      createdAt?: string;
-      likeCount?: string;
-      commentCount?: string;
-    }
-    let orderBy: OrderBy = { createdAt: 'desc' };
+    let orderBy: Prisma.PostOrderByWithRelationInput | Prisma.PostOrderByWithRelationInput[] = {
+      createdAt: 'desc',
+    };
     if (sort === 'trending') orderBy = [{ likeCount: 'desc' }, { commentCount: 'desc' }];
     else if (sort === 'most-commented') orderBy = { commentCount: 'desc' };
     else if (sort === 'most-liked') orderBy = { likeCount: 'desc' };
@@ -47,7 +46,22 @@ export async function GET(request: NextRequest) {
 
     const total = await prisma.post.count({ where: whereClause });
 
-    return NextResponse.json({ posts, total, page, pages: Math.ceil(total / limit) });
+    const normalizedPosts = posts.map((post) => {
+      let attachments: Array<{ name: string; data: string }> = [];
+
+      try {
+        attachments = JSON.parse(post.attachments || '[]') as Array<{ name: string; data: string }>;
+      } catch {
+        attachments = [];
+      }
+
+      return {
+        ...post,
+        attachments,
+      };
+    });
+
+    return NextResponse.json({ posts: normalizedPosts, total, page, pages: Math.ceil(total / limit) });
   } catch (error) {
     console.error('Error fetching posts:', error);
     return NextResponse.json({ error: 'Failed to fetch posts' }, { status: 500 });
@@ -56,11 +70,18 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { title, content, category, imageUrl, authorId, attachments } = await request.json();
+    const sessionUser = await getServerSessionUser();
+    if (!sessionUser) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-    if (!title || !content || !category || !authorId) {
+    const { title, content, category, imageUrl, attachments } = await request.json();
+
+    if (!title || !content || !category) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
+
+    const attachmentsValue = JSON.stringify(Array.isArray(attachments) ? attachments : []);
 
     const post = await prisma.post.create({
       data: { 
@@ -68,13 +89,19 @@ export async function POST(request: NextRequest) {
         content, 
         category, 
         imageUrl, 
-        authorId,
-        attachments: attachments || [],
+        authorId: sessionUser.id,
+        attachments: attachmentsValue,
       },
       include: { author: { select: { id: true, name: true, email: true } } },
     });
 
-    return NextResponse.json(post, { status: 201 });
+    return NextResponse.json(
+      {
+        ...post,
+        attachments: JSON.parse(post.attachments || '[]'),
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Error creating post:', error);
     return NextResponse.json({ error: 'Failed to create post' }, { status: 500 });

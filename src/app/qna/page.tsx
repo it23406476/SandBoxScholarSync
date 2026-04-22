@@ -20,6 +20,18 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 
+function parseTags(value: string | string[]) {
+  if (Array.isArray(value)) return value;
+  try {
+    const parsed = JSON.parse(value || '[]') as unknown;
+    return Array.isArray(parsed)
+      ? parsed.filter((tag): tag is string => typeof tag === 'string' && tag.trim().length > 0)
+      : [];
+  } catch {
+    return [];
+  }
+}
+
 export default function QuestionsPage() {
   const router = useRouter();
   const [questions, setQuestions] = useState<RankedQuestion[]>([]);
@@ -51,7 +63,7 @@ export default function QuestionsPage() {
     .filter((q) => {
       if (!normalizedSearch) return true;
 
-      const haystack = [q.title, q.content, q.tags.join(' '), q.module.code]
+      const haystack = [q.title, q.content, parseTags(q.tags).join(' '), q.module.code]
         .join(' ')
         .toLowerCase();
       return haystack.includes(normalizedSearch);

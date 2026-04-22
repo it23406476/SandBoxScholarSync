@@ -110,7 +110,23 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid notification IDs' }, { status: 400 });
     }
 
-    markNotificationsRead(sessionUser.id, notificationIds);
+    const dbNotificationIds = notificationIds.filter((id) => !id.startsWith('comment-'));
+    const legacyNotificationIds = notificationIds.filter((id) => id.startsWith('comment-'));
+
+    if (dbNotificationIds.length > 0) {
+      await prisma.notification.updateMany({
+        where: {
+          userId: sessionUser.id,
+          id: { in: dbNotificationIds },
+        },
+        data: { isRead: true },
+      });
+    }
+
+    if (legacyNotificationIds.length > 0) {
+      markNotificationsRead(sessionUser.id, legacyNotificationIds);
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error updating notifications:', error);

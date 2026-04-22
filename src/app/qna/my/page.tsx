@@ -39,6 +39,18 @@ type EditDraft = {
   bounty: number;
 };
 
+function parseTags(value: string | string[]) {
+  if (Array.isArray(value)) return value;
+  try {
+    const parsed = JSON.parse(value || '[]') as unknown;
+    return Array.isArray(parsed)
+      ? parsed.filter((tag): tag is string => typeof tag === 'string' && tag.trim().length > 0)
+      : [];
+  } catch {
+    return [];
+  }
+}
+
 export default function MyQuestionsPage() {
   const router = useRouter();
   const [questions, setQuestions] = useState<RankedQuestion[]>([]);
@@ -68,7 +80,7 @@ export default function MyQuestionsPage() {
     .filter((q) => {
       if (!normalizedSearch) return true;
 
-      const haystack = [q.title, q.content, q.tags.join(' '), q.module.code]
+      const haystack = [q.title, q.content, parseTags(q.tags).join(' '), q.module.code]
         .join(' ')
         .toLowerCase();
       return haystack.includes(normalizedSearch);
@@ -92,7 +104,7 @@ export default function MyQuestionsPage() {
       id: question.id,
       title: question.title,
       content: question.content,
-      tags: question.tags.join(', '),
+      tags: parseTags(question.tags).join(', '),
       bounty: question.bounty,
     });
   };
@@ -134,7 +146,7 @@ export default function MyQuestionsPage() {
               ...q,
               title,
               content,
-              tags,
+              tags: JSON.stringify(tags),
               bounty: editingQuestion.bounty,
             }
           : q

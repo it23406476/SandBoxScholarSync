@@ -18,6 +18,18 @@ export function QuestionCard({
   onEdit?: (question: RankedQuestion) => void;
   onDelete?: (question: RankedQuestion) => void;
 }) {
+  const tags = (() => {
+    if (Array.isArray(question.tags)) return question.tags;
+    try {
+      const parsed = JSON.parse(question.tags || '[]') as unknown;
+      return Array.isArray(parsed)
+        ? parsed.filter((tag): tag is string => typeof tag === 'string' && tag.trim().length > 0)
+        : [];
+    } catch {
+      return [];
+    }
+  })();
+
   return (
     <Card className="hover:border-primary/50 transition-colors cursor-pointer mb-3">
       <Link href={`/qna/${question.id}`}>
@@ -39,7 +51,7 @@ export function QuestionCard({
             <div className="flex flex-wrap items-center gap-2 pt-2 text-xs text-muted-foreground">
               <Badge variant="secondary">{question.module.code}</Badge>
 
-              {question.tags.map((tag: string) => (
+              {tags.map((tag: string) => (
                 <Badge key={tag} variant="outline" className="text-xs">
                   {tag}
                 </Badge>

@@ -2,6 +2,18 @@ import Link from 'next/link';
 import { getMyQuestions } from '@/actions/qna.actions';
 import { getAuthSession } from '@/lib/auth';
 
+function parseTags(value: string | string[]) {
+  if (Array.isArray(value)) return value;
+  try {
+    const parsed = JSON.parse(value || '[]') as unknown;
+    return Array.isArray(parsed)
+      ? parsed.filter((tag): tag is string => typeof tag === 'string' && tag.trim().length > 0)
+      : [];
+  } catch {
+    return [];
+  }
+}
+
 export default async function StudentMyQuestionsPage() {
   const session = await getAuthSession();
   const myQuestions = session?.user?.id ? await getMyQuestions() : [];
@@ -33,7 +45,7 @@ export default async function StudentMyQuestionsPage() {
               </Link>
               <p className="mt-2 text-slate-400">
                 {question.upvotes} upvotes • {question.answers.length} answers •{' '}
-                {question.tags.join(', ')}
+                {parseTags(question.tags).join(', ')}
               </p>
             </article>
           ))

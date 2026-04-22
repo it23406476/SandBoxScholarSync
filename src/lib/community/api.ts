@@ -22,33 +22,30 @@ export const communityApi = {
     content: string,
     category: string,
     imageUrl: string | undefined,
-    authorId: string,
     attachments?: Array<{ name: string; data: string }>
   ) {
     const res = await fetch('/api/posts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, content, category, imageUrl, authorId, attachments: attachments || [] }),
+      body: JSON.stringify({ title, content, category, imageUrl, attachments: attachments || [] }),
     });
     if (!res.ok) throw new Error('Failed to create post');
     return res.json();
   },
 
-  async toggleLike(postId: string, userId: string) {
+  async toggleLike(postId: string) {
     const res = await fetch(`/api/posts/${postId}/like`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId }),
     });
     if (!res.ok) throw new Error('Failed to toggle like');
     return res.json();
   },
 
-  async createComment(content: string, postId: string, authorId: string, parentCommentId?: string) {
+  async createComment(content: string, postId: string, parentCommentId?: string) {
     const res = await fetch('/api/comments', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content, postId, authorId, parentCommentId }),
+      body: JSON.stringify({ content, postId, parentCommentId }),
     });
     if (!res.ok) throw new Error('Failed to create comment');
     return res.json();
@@ -72,9 +69,19 @@ export const communityApi = {
     return res.json();
   },
 
-  async getNotifications(userId: string, limit: number = 10) {
-    const res = await fetch(`/api/notifications?userId=${userId}&limit=${limit}`, { cache: 'no-store' });
+  async getNotifications(page: number = 1, limit: number = 20) {
+    const res = await fetch(`/api/notifications?page=${page}&limit=${limit}`, { cache: 'no-store' });
     if (!res.ok) throw new Error('Failed to fetch notifications');
+    return res.json();
+  },
+
+  async markNotificationsAsRead(notificationIds: string[]) {
+    const res = await fetch('/api/notifications', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ notificationIds }),
+    });
+    if (!res.ok) throw new Error('Failed to mark notifications as read');
     return res.json();
   },
 
@@ -88,9 +95,15 @@ export const communityApi = {
     return res.json();
   },
 
-  async getUnreadNotificationCount(userId: string) {
-    const res = await fetch(`/api/notifications/unread?userId=${userId}`, { cache: 'no-store' });
+  async getUnreadNotificationCount() {
+    const res = await fetch('/api/notifications/unread', { cache: 'no-store' });
     if (!res.ok) throw new Error('Failed to fetch unread count');
     return res.json();
+  },
+
+  async getCurrentUserLikedPostIds() {
+    const res = await fetch('/api/posts/user/me/likes', { cache: 'no-store' });
+    if (!res.ok) throw new Error('Failed to fetch liked posts');
+    return res.json() as Promise<{ likedPostIds: string[] }>;
   },
 };

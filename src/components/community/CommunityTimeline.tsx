@@ -19,7 +19,26 @@ export function CommunityTimeline({ currentUserId }: CommunityTimelineProps) {
     searchQuery,
     sortBy,
     currentPage,
+    setUserLikes,
   } = useCommunityStore();
+
+  React.useEffect(() => {
+    if (!currentUserId) {
+      setUserLikes([]);
+      return;
+    }
+
+    const fetchUserLikes = async () => {
+      try {
+        const { likedPostIds } = await communityApi.getCurrentUserLikedPostIds();
+        setUserLikes(likedPostIds);
+      } catch (error) {
+        console.error('Error fetching liked posts:', error);
+      }
+    };
+
+    fetchUserLikes();
+  }, [currentUserId, setUserLikes]);
 
   React.useEffect(() => {
     const fetchPosts = async () => {

@@ -30,7 +30,7 @@ export function ArticleCard({ post, currentUserId }: ArticleCardProps) {
     e.preventDefault();
     if (!currentUserId) return;
     try {
-      const result = await communityApi.toggleLike(post.id, currentUserId);
+      const result = await communityApi.toggleLike(post.id);
       if (result.liked) {
         addUserLike(post.id);
         setLikeCount((prev) => prev + 1);
@@ -48,7 +48,7 @@ export function ArticleCard({ post, currentUserId }: ArticleCardProps) {
       <article className="h-full bg-white dark:bg-slate-800 rounded-lg shadow hover:shadow-md transition-shadow border border-gray-200 dark:border-slate-700 cursor-pointer overflow-hidden flex flex-col">
         {/* Image */}
         {post.imageUrl && (
-          <div className="w-full h-40 overflow-hidden bg-gradient-to-br from-blue-100 to-blue-50 dark:from-blue-900 dark:to-blue-800">
+          <div className="w-full h-40 overflow-hidden bg-linear-to-br from-blue-100 to-blue-50 dark:from-blue-900 dark:to-blue-800">
             <img
               src={post.imageUrl}
               alt={post.title}
@@ -58,7 +58,7 @@ export function ArticleCard({ post, currentUserId }: ArticleCardProps) {
         )}
 
         {/* Content */}
-        <div className="flex flex-col flex-grow p-4">
+        <div className="flex flex-col grow p-4">
           {/* Author Info */}
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs font-medium text-gray-500 dark:text-gray-400 truncate">
@@ -75,7 +75,7 @@ export function ArticleCard({ post, currentUserId }: ArticleCardProps) {
           </h3>
 
           {/* Description */}
-          <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 mb-4 flex-grow">
+          <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 mb-4 grow">
             {truncateContent(post.content, 120)}
           </p>
 

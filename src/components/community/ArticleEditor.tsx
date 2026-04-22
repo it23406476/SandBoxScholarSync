@@ -87,7 +87,7 @@ export function ArticleEditor({ currentUserId }: ArticleEditorProps) {
         name: pdf.name,
         data: pdf.data,
       }));
-      await communityApi.createPost(title, content, category, imageUrl || undefined, currentUserId, attachmentsData);
+      await communityApi.createPost(title, content, category, imageUrl || undefined, attachmentsData);
       router.push('/community');
     } catch (error) {
       console.error('Error creating post:', error);
@@ -125,6 +125,8 @@ export function ArticleEditor({ currentUserId }: ArticleEditorProps) {
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
+            title="Select category"
+            aria-label="Select category"
             className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             {CATEGORIES.map((cat) => (
@@ -148,6 +150,8 @@ export function ArticleEditor({ currentUserId }: ArticleEditorProps) {
               <button
                 type="button"
                 onClick={handleRemoveImage}
+                title="Remove image"
+                aria-label="Remove image"
                 className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full hover:bg-red-700"
               >
                 <X size={20} />
@@ -168,6 +172,8 @@ export function ArticleEditor({ currentUserId }: ArticleEditorProps) {
             type="file"
             accept="image/*"
             onChange={handleImageSelect}
+            title="Upload image"
+            aria-label="Upload image"
             className="hidden"
           />
         </div>
@@ -194,6 +200,8 @@ export function ArticleEditor({ currentUserId }: ArticleEditorProps) {
             type="file"
             accept=".pdf,application/pdf"
             onChange={handlePdfSelect}
+            title="Upload PDF"
+            aria-label="Upload PDF"
             className="hidden"
           />
           {pdfFiles.length > 0 && (
@@ -212,6 +220,8 @@ export function ArticleEditor({ currentUserId }: ArticleEditorProps) {
                   <button
                     type="button"
                     onClick={() => handleRemovePdf(pdf.id)}
+                    title="Remove PDF"
+                    aria-label={`Remove ${pdf.name}`}
                     className="p-1 hover:bg-red-100 dark:hover:bg-red-900 rounded transition-colors"
                   >
                     <X size={18} className="text-red-600 dark:text-red-400" />

@@ -35,6 +35,7 @@ interface CommunityStore {
   setSearch: (query: string) => void;
   setSort: (sort: 'recent' | 'trending' | 'most-liked' | 'most-commented') => void;
   setPage: (page: number) => void;
+  setUserLikes: (postIds: string[]) => void;
   addUserLike: (postId: string) => void;
   removeUserLike: (postId: string) => void;
   reset: () => void;
@@ -59,6 +60,7 @@ export const useCommunityStore = create<CommunityStore>((set) => ({
   setSearch: (query) => set({ searchQuery: query, currentPage: 1 }),
   setSort: (sort) => set({ sortBy: sort, currentPage: 1 }),
   setPage: (page) => set({ currentPage: page }),
+  setUserLikes: (postIds) => set({ userLikedPosts: new Set(postIds) }),
 
   addUserLike: (postId) =>
     set((state) => {
