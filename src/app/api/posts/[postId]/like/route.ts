@@ -1,42 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import { getServerSessionUser } from '@/lib/auth';
-import { toggleUserPostLike } from '@/lib/community/serverState';
+import { prisma } from '@/lib/prisma';
 
-export async function POST(
-  _request: NextRequest,
-  { params }: { params: Promise<{ postId: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ postId: string }> }) {
   try {
-    const sessionUser = await getServerSessionUser();
-    if (!sessionUser) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const { postId } = await params;
+    const { userId } = await request.json();
+    if (!userId) return NextResponse.json({ error: 'User ID required' }, { status: 400 });
 
-    const post = await prisma.post.findUnique({
-      where: { id: postId },
-      select: { id: true, likes: true },
+    const existingLike = await prisma.like.findUnique({
+      where: { userId_postId: { userId, postId } },
     });
 
-    if (!post) {
-      return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+    if (existingLike) {
+      await prisma.like.delete({ where: { userId_postId: { userId, postId } } });
+      await prisma.post.update({
+        where: { id: postId },
+        data: { likeCount: { decrement: 1 } },
+      });
+      return NextResponse.json({ liked: false });
+    } else {
+      await prisma.like.create({ data: { userId, postId } });
+      await prisma.post.update({
+        where: { id: postId },
+        data: { likeCount: { increment: 1 } },
+      });
+      return NextResponse.json({ liked: true });
     }
-
-    const liked = toggleUserPostLike(sessionUser.id, postId);
-
-    const updated = await prisma.post.update({
-      where: { id: postId },
-      data: {
-        likes: liked ? { increment: 1 } : { decrement: post.likes > 0 ? 1 : 0 },
-      },
-      select: { likes: true },
-    });
-
-    return NextResponse.json({ liked, likeCount: updated.likes });
   } catch (error) {
-    console.error('Error toggling like:', error);
-    return NextResponse.json({ error: 'Failed to toggle like' }, { status: 500 });
+    console.error('Error:', error);
+    return NextResponse.json({ error: 'Failed' }, { status: 500 });
   }
 }

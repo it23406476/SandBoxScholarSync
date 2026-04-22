@@ -1,14 +1,15 @@
 'use client';
 
 import React from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { Heart, MessageCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
 import { communityApi } from '@/lib/community/api';
 import { formatDate } from '@/lib/community/helpers';
 import { CommentSection } from '@/components/community/CommentSection';
 import { useCommunityStore } from '@/lib/community/communityStore';
+
+const CURRENT_USER_ID = 'user-123';
 
 interface Post {
   id: string;
@@ -31,13 +32,10 @@ interface Comment {
 
 export default function ArticleDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const postId = params.postId as string;
-  const { data: session } = useSession();
-  const currentUserId = session?.user?.id;
   const [post, setPost] = React.useState<Post | null>(null);
   const [loading, setLoading] = React.useState(true);
-  const { userLikedPosts, addUserLike, removeUserLike, loadUserLikes } = useCommunityStore();
+  const { userLikedPosts, addUserLike, removeUserLike } = useCommunityStore();
   const [likeCount, setLikeCount] = React.useState(0);
   const isLiked = userLikedPosts.has(postId);
 
@@ -53,24 +51,12 @@ export default function ArticleDetailPage() {
         setLoading(false);
       }
     };
-
-    const loadUserLikesData = async () => {
-      if (currentUserId) {
-        await loadUserLikes(currentUserId);
-      }
-    };
-
     fetchPost();
-    loadUserLikesData();
-  }, [postId, currentUserId, loadUserLikes]);
+  }, [postId]);
 
   const handleLike = async () => {
-    if (!currentUserId) {
-      router.push('/login');
-      return;
-    }
     try {
-      const result = await communityApi.toggleLike(postId, currentUserId);
+      const result = await communityApi.toggleLike(postId, CURRENT_USER_ID);
       if (result.liked) {
         addUserLike(postId);
         setLikeCount((prev) => prev + 1);
@@ -158,21 +144,16 @@ export default function ArticleDetailPage() {
 
           <CommentSection
             postId={postId}
-            comments={(post.comments || []).map((comment) => ({
-              ...comment,
-              createdAt: new Date(comment.createdAt),
-            }))}
-            currentUserId={currentUserId}
+            comments={post.comments || []}
+            currentUserId={CURRENT_USER_ID}
             onCommentAdded={(comment) => {
-              setPost((prev: Post | null) =>
-                prev
-                  ? {
-                      ...prev,
-                      comments: [comment, ...(prev.comments || [])],
-                      commentCount: (prev.commentCount || 0) + 1,
-                    }
-                  : null
-              );
+              setPost((prev: Post | null) => (
+                prev ? {
+                  ...prev,
+                  comments: [comment, ...(prev.comments || [])],
+                  commentCount: (prev.commentCount || 0) + 1,
+                } : null
+              ));
             }}
           />
         </article>

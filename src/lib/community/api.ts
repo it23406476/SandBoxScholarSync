@@ -28,14 +28,7 @@ export const communityApi = {
     const res = await fetch('/api/posts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        title,
-        content,
-        category,
-        imageUrl,
-        authorId,
-        attachments: attachments || [],
-      }),
+      body: JSON.stringify({ title, content, category, imageUrl, authorId, attachments: attachments || [] }),
     });
     if (!res.ok) throw new Error('Failed to create post');
     return res.json();
@@ -45,7 +38,6 @@ export const communityApi = {
     const res = await fetch(`/api/posts/${postId}/like`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
       body: JSON.stringify({ userId }),
     });
     if (!res.ok) throw new Error('Failed to toggle like');
@@ -56,39 +48,9 @@ export const communityApi = {
     const res = await fetch('/api/comments', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
       body: JSON.stringify({ content, postId, authorId }),
     });
     if (!res.ok) throw new Error('Failed to create comment');
-    return res.json();
-  },
-
-  async getNotifications(page: number = 1) {
-    const params = new URLSearchParams();
-    params.append('page', page.toString());
-
-    const res = await fetch(`/api/notifications?${params}`, { cache: 'no-store' });
-    if (!res.ok) throw new Error('Failed to fetch notifications');
-    return res.json();
-  },
-
-  async getUserLikes(userId: string) {
-    const res = await fetch(`/api/posts/user/${userId}/likes`, {
-      cache: 'no-store',
-      credentials: 'include',
-    });
-    if (!res.ok) throw new Error('Failed to fetch user likes');
-    return res.json();
-  },
-
-  async markNotificationsAsRead(notificationIds: string[]) {
-    const res = await fetch('/api/notifications', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ notificationIds }),
-    });
-    if (!res.ok) throw new Error('Failed to mark notifications as read');
     return res.json();
   },
 };

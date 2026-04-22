@@ -7,14 +7,12 @@ import { useCommunityStore } from '@/lib/community/communityStore';
 export function SearchBar() {
   const { setSearch, searchQuery } = useCommunityStore();
   const [input, setInput] = React.useState(searchQuery);
-  const debounceTimer = React.useRef<NodeJS.Timeout | null>(null);
+  const debounceTimer = React.useRef<NodeJS.Timeout>();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInput(value);
-    if (debounceTimer.current) {
-      clearTimeout(debounceTimer.current);
-    }
+    clearTimeout(debounceTimer.current);
     debounceTimer.current = setTimeout(() => {
       setSearch(value);
     }, 300);

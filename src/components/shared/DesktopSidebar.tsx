@@ -4,10 +4,10 @@ import {
   Home,
   MessageSquare,
   PlusCircle,
-  /* Award, */ User,
+  User,
   LayoutDashboard,
   BookOpen,
-  /*BarChart3, */ HelpCircle,
+  HelpCircle,
   LogOut,
   BarChart3,
   type LucideIcon,
@@ -35,7 +35,7 @@ const studentNav: SidebarNavItem[] = [
   { to: '/qna/my', icon: HelpCircle, label: 'My Questions', end: true },
   { to: '/ask', icon: PlusCircle, label: 'Ask Question' },
   { to: '/community', icon: BookOpen, label: 'Community' },
-  { to: '/student/profile', icon: User, label: 'Profile' },
+  { to: '/profile', icon: User, label: 'Profile' },
 ];
 
 const lecturerNav: SidebarNavItem[] = [
@@ -43,10 +43,12 @@ const lecturerNav: SidebarNavItem[] = [
   { to: '/qna', icon: HelpCircle, label: 'Q&A', end: true },
   { to: '/qna/my', icon: HelpCircle, label: 'My Questions', end: true },
   { to: '/modules', icon: BookOpen, label: 'Manage Modules' },
+  { to: '/lecturer', icon: HelpCircle, label: 'Question Forum' },
   { to: '/community', icon: MessageSquare, label: 'Community' },
   { to: '/analytics', icon: BarChart3, label: 'Analytics' },
   { to: '/profile', icon: User, label: 'Profile' },
 ];
+
 
 export function DesktopSidebar({ role }: DesktopSidebarProps) {
   const items = role === 'student' ? studentNav : lecturerNav;

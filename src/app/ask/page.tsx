@@ -96,7 +96,12 @@ export default function AskQuestionPage() {
 
   return (
     <div className="max-w-3xl mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6">Ask a Question</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold">Ask a Question</h1>
+        <Button variant="outline" onClick={() => router.push('/community')}>
+          Go to Community Forum
+        </Button>
+      </div>
 
       <div className="grid gap-6">
         {/* DUPLICATE WARNING WIDGET */}

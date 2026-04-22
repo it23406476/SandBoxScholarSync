@@ -5,7 +5,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -20,7 +20,7 @@ model User {
   passwordResetOtp String?
   passwordResetOtpExpires DateTime?
   points    Int      @default(100)
-  badges    String[]
+  badges    String   @default("[]")
 
   accounts  Account[]
   sessions  Session[]
@@ -29,10 +29,9 @@ model User {
   answers   Answer[]          @relation("UserAnswers")
   posts     Post[]            @relation("UserPosts")
   comments  Comment[]         @relation("UserComments")
-  questionVotes Vote[]
-  moduleAssignments LecturerModuleAssignment[]
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
+  likes     Like[]            @relation("UserLikes")
 }
 
 model Account {
@@ -83,7 +82,6 @@ model Module {
   name            String
   healthReportUrl String?
   questions       Question[] @relation("ModuleQuestions")
-  lecturerAssignments LecturerModuleAssignment[]
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
 }
@@ -92,7 +90,7 @@ model Question {
   id          String   @id @default(cuid())
   title       String
   content     String
-  tags        String[]
+  tags        String   @default("[]")
   upvotes     Int      @default(0)
   bounty      Int      @default(0)
   isDuplicate Boolean  @default(false)
@@ -103,37 +101,10 @@ model Question {
   module      Module   @relation("ModuleQuestions", fields: [moduleId], references: [id])
 
   answers     Answer[] @relation("QuestionAnswers")
-  votes       Vote[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@index([authorId])
-  @@index([moduleId])
-}
-
-model Vote {
-  id         String   @id @default(cuid())
-  value      Int
-  userId     String
-  questionId String
-  user       User     @relation(fields: [userId], references: [id])
-  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@unique([userId, questionId])
-  @@index([questionId])
-}
-
-model LecturerModuleAssignment {
-  id         String   @id @default(cuid())
-  lecturerId String
-  moduleId   String
-  lecturer   User     @relation(fields: [lecturerId], references: [id], onDelete: Cascade)
-  module     Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  createdAt  DateTime @default(now())
-
-  @@unique([lecturerId, moduleId])
   @@index([moduleId])
 }
 
@@ -155,20 +126,24 @@ model Answer {
 }
 
 model Post {
-  id        String   @id @default(cuid())
-  title     String
-  content   String
-  category  String
-  likes     Int      @default(0)
-  fileUrl   String?
+  id           String   @id @default(cuid())
+  title        String
+  content      String
+  category     String
+  imageUrl     String?
+  attachments  String   @default("[]")
+  likeCount    Int      @default(0)
+  commentCount Int      @default(0)
 
-  authorId  String
-  author    User     @relation("UserPosts", fields: [authorId], references: [id])
-  comments  Comment[] @relation("PostComments")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  authorId     String
+  author       User     @relation("UserPosts", fields: [authorId], references: [id], onDelete: Cascade)
+  comments     Comment[] @relation("PostComments")
+  likes        Like[]    @relation("PostLikes")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@index([authorId])
+  @@index([createdAt])
 }
 
 model Comment {
@@ -183,5 +158,19 @@ model Comment {
   updatedAt DateTime @updatedAt
 
   @@index([authorId])
+  @@index([postId])
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  
+  userId    String
+  user      User     @relation("UserLikes", fields: [userId], references: [id], onDelete: Cascade)
+  postId    String
+  post      Post     @relation("PostLikes", fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
+  @@index([userId])
   @@index([postId])
 }
