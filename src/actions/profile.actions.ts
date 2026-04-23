@@ -70,7 +70,13 @@ const LEGACY_BADGE_ICON_MAP: Record<string, string> = {
 };
 
 export async function getUserProfileData(): Promise<UserProfileData> {
-  const session = await getAuthSession();
+  let session;
+  try {
+    session = await getAuthSession();
+  } catch {
+    redirect('/login');
+  }
+
   if (!session?.user?.id) {
     redirect('/login');
   }
@@ -99,11 +105,11 @@ export async function getUserProfileData(): Promise<UserProfileData> {
       },
     });
   } catch {
-    throw new Error('Database connection failed. Please try again later.');
+    redirect('/login');
   }
 
   if (!user) {
-    throw new Error('User not found');
+    redirect('/login');
   }
 
   const questionsCount = user.questions.length;

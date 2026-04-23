@@ -7,7 +7,7 @@ import { useNotificationsStore } from '@/lib/community/notificationsStore';
 import { NotificationList } from './NotificationList';
 
 export function NotificationBell() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const { unreadCount, fetchNotifications, markAllAsRead } = useNotificationsStore();
   const [isOpen, setIsOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -33,7 +33,7 @@ export function NotificationBell() {
     await markAllAsRead();
   };
 
-  if (!session?.user?.id) {
+  if (status === 'unauthenticated') {
     return null;
   }
 
